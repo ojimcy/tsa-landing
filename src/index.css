@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #9D6B38;
+  --color-brand-soft: #E8A14A;
+  --color-brand-deep: #7d5429;
+  --color-surface-dark: #253334;
+  --color-surface-darker: #1a2425;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+  --primary: #9D6B38;
+  --primary-foreground: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: #1a1a1a;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.8; transform: scale(1.04); }
+}
+
+.reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+.reveal-on {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; }
+  .reveal-on,
+  .animate-float,
+  .animate-soft-pulse {
+    animation: none !important;
+  }
+}

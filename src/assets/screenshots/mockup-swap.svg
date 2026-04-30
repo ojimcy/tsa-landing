@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 1140" preserveAspectRatio="xMidYMid slice" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif">
+  <rect width="540" height="1140" fill="#F1F5F9"/>
+
+  <!-- header -->
+  <rect width="540" height="100" fill="#FFFFFF"/>
+  <g transform="translate(28 42)" fill="#9D6B38">
+    <rect width="28" height="3" rx="1.5"/>
+    <rect y="9" width="28" height="3" rx="1.5"/>
+    <rect y="18" width="28" height="3" rx="1.5"/>
+  </g>
+  <text x="270" y="60" text-anchor="middle" font-size="24" font-weight="700" fill="#9D6B38">TSA Connect</text>
+  <g transform="translate(440 50)" stroke="#1F2937" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-9 -1c0-5 4-9 9-9s9 4 9 9v6l3 4h-24l3-4z"/>
+    <path d="M-3 7c0 2 1 4 3 4s3-2 3-4"/>
+  </g>
+  <circle cx="500" cy="50" r="20" fill="#9D6B38"/>
+  <text x="500" y="58" text-anchor="middle" font-size="20" font-weight="700" fill="#FFFFFF">U</text>
+
+  <!-- step pills -->
+  <g font-size="16">
+    <rect x="20" y="130" width="138" height="50" rx="25" fill="#FEF3C7"/>
+    <circle cx="46" cy="155" r="14" fill="#9D6B38"/>
+    <text x="46" y="161" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF">1</text>
+    <text x="68" y="161" font-size="16" font-weight="700" fill="#0F172A">Swap</text>
+
+    <circle cx="194" cy="155" r="14" fill="#E2E8F0"/>
+    <text x="194" y="161" text-anchor="middle" font-size="14" font-weight="700" fill="#64748B">2</text>
+    <text x="216" y="161" font-size="16" fill="#64748B">Spot Trade</text>
+
+    <circle cx="358" cy="155" r="14" fill="#E2E8F0"/>
+    <text x="358" y="161" text-anchor="middle" font-size="14" font-weight="700" fill="#64748B">3</text>
+    <text x="380" y="161" font-size="16" fill="#64748B">All swap</text>
+  </g>
+
+  <!-- title -->
+  <text x="28" y="248" font-size="44" font-weight="800" fill="#0F172A">Swap</text>
+  <text x="28" y="282" font-size="18" fill="#64748B">OTC Marketplace</text>
+
+  <!-- YOU PAY card -->
+  <rect x="20" y="312" width="500" height="140" rx="18" fill="#FFFFFF"/>
+  <text x="44" y="346" font-size="14" font-weight="600" fill="#94A3B8">YOU PAY</text>
+  <text x="496" y="346" text-anchor="end" font-size="14" font-weight="600" fill="#9D6B38">Balance: 85.005</text>
+  <!-- token chip -->
+  <rect x="40" y="370" width="160" height="56" rx="28" fill="#F8FAFC"/>
+  <circle cx="68" cy="398" r="20" fill="#9D6B38"/>
+  <text x="68" y="406" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">M</text>
+  <text x="98" y="406" font-size="20" font-weight="700" fill="#0F172A">MCGP</text>
+  <g transform="translate(180 398)" stroke="#0F172A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-5 -2l5 5 5 -5"/>
+  </g>
+  <!-- amount -->
+  <text x="496" y="412" text-anchor="end" font-size="38" font-weight="800" fill="#CBD5E1">0.00</text>
+
+  <!-- swap arrow -->
+  <circle cx="270" cy="475" r="28" fill="#9D6B38"/>
+  <g transform="translate(270 475)" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-9 -7v14 M-13 3l4 4 4 -4"/>
+    <path d="M9 7v-14 M13 -3l-4 -4 -4 4"/>
+  </g>
+
+  <!-- YOU RECEIVE card -->
+  <rect x="20" y="500" width="500" height="140" rx="18" fill="#FFFFFF"/>
+  <text x="44" y="534" font-size="14" font-weight="600" fill="#94A3B8">YOU RECEIVE</text>
+  <text x="496" y="534" text-anchor="end" font-size="14" font-weight="600" fill="#9D6B38">Balance: 0</text>
+  <rect x="40" y="558" width="160" height="56" rx="28" fill="#F8FAFC"/>
+  <circle cx="68" cy="586" r="20" fill="#2775CA"/>
+  <text x="68" y="594" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">$</text>
+  <text x="98" y="594" font-size="20" font-weight="700" fill="#0F172A">USDC</text>
+  <g transform="translate(180 586)" stroke="#0F172A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-5 -2l5 5 5 -5"/>
+  </g>
+  <line x1="430" y1="592" x2="490" y2="592" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- review swap button (disabled) -->
+  <rect x="20" y="690" width="500" height="76" rx="38" fill="#E8A14A" opacity="0.55"/>
+  <text x="270" y="738" text-anchor="middle" font-size="22" font-weight="700" fill="#FFFFFF">Review Swap</text>
+
+  <!-- bottom tab bar (Easyswap active) -->
+  <rect x="0" y="1040" width="540" height="100" fill="#FFFFFF"/>
+  <line x1="0" y1="1040" x2="540" y2="1040" stroke="#E2E8F0"/>
+  <g font-size="12" text-anchor="middle">
+    <g transform="translate(60 1078)" fill="none" stroke="#94A3B8" stroke-width="2.4" stroke-linecap="round">
+      <ellipse cx="-4" cy="0" rx="6" ry="4" transform="rotate(-30)"/>
+      <ellipse cx="4" cy="0" rx="6" ry="4" transform="rotate(-30)"/>
+    </g>
+    <text x="60" y="1112" fill="#94A3B8">Tsa Connect</text>
+
+    <g transform="translate(170 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-10 -4h20l-2 12h-16z"/>
+      <circle cx="-4" cy="12" r="2.5"/>
+      <circle cx="6" cy="12" r="2.5"/>
+    </g>
+    <text x="170" y="1112" fill="#94A3B8">Marketplace</text>
+
+    <g transform="translate(280 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="-1" cy="-4" r="4"/>
+      <path d="M-8 9a8 8 0 0 1 14 -1"/>
+      <circle cx="7" cy="-2" r="3"/>
+    </g>
+    <text x="280" y="1112" fill="#94A3B8">Services</text>
+
+    <g transform="translate(390 1078)" stroke="#9D6B38" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-8 -4h14 l-3 -3 M6 4h-14 l3 3"/>
+    </g>
+    <text x="390" y="1112" fill="#9D6B38" font-weight="700">Easyswap</text>
+
+    <g transform="translate(490 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-10 -6h20v12h-20z"/>
+      <circle cx="5" cy="0" r="2.2" fill="#94A3B8"/>
+    </g>
+    <text x="490" y="1112" fill="#94A3B8">Wallet</text>
+  </g>
+</svg>

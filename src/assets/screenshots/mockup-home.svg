@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 1140" preserveAspectRatio="xMidYMid slice" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif">
+  <rect width="540" height="1140" fill="#F1F5F9"/>
+
+  <!-- header -->
+  <rect width="540" height="100" fill="#FFFFFF"/>
+  <g transform="translate(28 42)" fill="#9D6B38">
+    <rect width="28" height="3" rx="1.5"/>
+    <rect y="9" width="28" height="3" rx="1.5"/>
+    <rect y="18" width="28" height="3" rx="1.5"/>
+  </g>
+  <text x="270" y="60" text-anchor="middle" font-size="24" font-weight="700" fill="#9D6B38">TSA Connect</text>
+  <g transform="translate(440 50)" stroke="#1F2937" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-9 -1c0-5 4-9 9-9s9 4 9 9v6l3 4h-24l3-4z"/>
+    <path d="M-3 7c0 2 1 4 3 4s3-2 3-4"/>
+  </g>
+  <circle cx="500" cy="50" r="20" fill="#9D6B38"/>
+  <text x="500" y="58" text-anchor="middle" font-size="20" font-weight="700" fill="#FFFFFF">U</text>
+
+  <!-- title row -->
+  <text x="28" y="170" font-size="32" font-weight="800" fill="#0F172A">TSA Connect</text>
+  <g transform="translate(478 148)" fill="none" stroke="#9D6B38" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-12 -6h28l-3 14h-22z"/>
+    <circle cx="-7" cy="13" r="3"/>
+    <circle cx="9" cy="13" r="3"/>
+  </g>
+
+  <!-- portfolio card -->
+  <rect x="20" y="200" width="500" height="220" rx="20" fill="#1F2D2E"/>
+  <text x="44" y="244" font-size="18" fill="#94A3B8">Total Portfolio</text>
+  <g transform="translate(484 240)" stroke="#94A3B8" stroke-width="2" fill="none">
+    <ellipse cx="0" cy="0" rx="11" ry="7"/>
+    <circle cx="0" cy="0" r="3.5"/>
+  </g>
+  <text x="44" y="296" font-size="44" font-weight="800" fill="#FFFFFF">$1.70</text>
+  <line x1="44" y1="332" x2="496" y2="332" stroke="#3F4D4E"/>
+
+  <!-- 4 action circles -->
+  <g font-size="14" fill="#FFFFFF" text-anchor="middle">
+    <circle cx="105" cy="370" r="22" fill="#3D2F18"/>
+    <g transform="translate(105 370)" stroke="#E8A14A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-7 -4h14v11h-14z"/>
+      <path d="M-4 -4v-2c0-2 2-4 4-4s4 2 4 4v2"/>
+    </g>
+    <text x="105" y="408">Buy</text>
+
+    <circle cx="210" cy="370" r="22" fill="#3D2F18"/>
+    <g transform="translate(210 370)" stroke="#E8A14A" stroke-width="2.1" fill="none">
+      <circle r="3.5"/>
+      <path d="M0 -10v3 M0 10v-3 M-10 0h3 M10 0h-3 M-7 -7l2 2 M7 7l-2 -2 M7 -7l-2 2 M-7 7l2 -2"/>
+    </g>
+    <text x="210" y="408">Services</text>
+
+    <circle cx="315" cy="370" r="22" fill="#3D2F18"/>
+    <g transform="translate(315 370)" stroke="#E8A14A" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-9 5 L-3 -1 L1 3 L9 -7"/>
+      <path d="M5 -7h4v4"/>
+    </g>
+    <text x="315" y="408">Trade</text>
+
+    <circle cx="420" cy="370" r="22" fill="#3D2F18"/>
+    <g transform="translate(420 370)" stroke="#E8A14A" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-10 -6h20v12h-20z"/>
+      <circle cx="5" cy="0" r="2.2" fill="#E8A14A"/>
+    </g>
+    <text x="420" y="408">Wallet</text>
+  </g>
+
+  <!-- assets card -->
+  <rect x="20" y="450" width="500" height="320" rx="20" fill="#FFFFFF"/>
+  <text x="44" y="494" font-size="20" font-weight="700" fill="#0F172A">Assets</text>
+
+  <!-- MCGP -->
+  <circle cx="64" cy="552" r="22" fill="#E8A14A"/>
+  <text x="64" y="560" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">M</text>
+  <text x="100" y="548" font-size="18" font-weight="700" fill="#0F172A">MCGP</text>
+  <text x="100" y="572" font-size="13" fill="#64748B">Mason Capital Gold Point</text>
+  <text x="496" y="548" text-anchor="end" font-size="18" font-weight="700" fill="#0F172A">85.00</text>
+  <text x="496" y="572" text-anchor="end" font-size="13" fill="#64748B">$1.70</text>
+  <line x1="44" y1="600" x2="496" y2="600" stroke="#E2E8F0"/>
+
+  <!-- USDC -->
+  <circle cx="64" cy="640" r="22" fill="#2775CA"/>
+  <text x="64" y="648" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">$</text>
+  <text x="100" y="636" font-size="18" font-weight="700" fill="#0F172A">USDC</text>
+  <text x="100" y="660" font-size="13" fill="#64748B">USD Coin</text>
+  <text x="496" y="636" text-anchor="end" font-size="18" font-weight="700" fill="#0F172A">0.00</text>
+  <text x="496" y="660" text-anchor="end" font-size="13" fill="#64748B">$0.00</text>
+  <line x1="44" y1="688" x2="496" y2="688" stroke="#E2E8F0"/>
+
+  <!-- USDT -->
+  <circle cx="64" cy="728" r="22" fill="#26A17B"/>
+  <text x="64" y="736" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">T</text>
+  <text x="100" y="724" font-size="18" font-weight="700" fill="#0F172A">USDT</text>
+  <text x="100" y="748" font-size="13" fill="#64748B">Tether USD</text>
+  <text x="496" y="724" text-anchor="end" font-size="18" font-weight="700" fill="#0F172A">0.00</text>
+  <text x="496" y="748" text-anchor="end" font-size="13" fill="#64748B">$0.00</text>
+
+  <!-- Recent activity card -->
+  <rect x="20" y="800" width="500" height="220" rx="20" fill="#FFFFFF"/>
+  <text x="44" y="844" font-size="20" font-weight="700" fill="#0F172A">Recent Activity</text>
+  <line x1="44" y1="868" x2="496" y2="868" stroke="#E2E8F0"/>
+  <g transform="translate(270 950)" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M-16 -16h32v36l-7-5-9 5-9-5-7 5z"/>
+    <path d="M-9 -7h18 M-9 0h18 M-9 7h12" fill="none"/>
+  </g>
+
+  <!-- bottom tab bar -->
+  <rect x="0" y="1040" width="540" height="100" fill="#FFFFFF"/>
+  <line x1="0" y1="1040" x2="540" y2="1040" stroke="#E2E8F0"/>
+  <g font-size="12" text-anchor="middle">
+    <g transform="translate(60 1078)" fill="none" stroke="#9D6B38" stroke-width="2.4" stroke-linecap="round">
+      <ellipse cx="-4" cy="0" rx="6" ry="4" transform="rotate(-30)"/>
+      <ellipse cx="4" cy="0" rx="6" ry="4" transform="rotate(-30)"/>
+    </g>
+    <text x="60" y="1112" fill="#9D6B38" font-weight="700">Tsa Connect</text>
+
+    <g transform="translate(170 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-10 -4h20l-2 12h-16z"/>
+      <circle cx="-4" cy="12" r="2.5"/>
+      <circle cx="6" cy="12" r="2.5"/>
+    </g>
+    <text x="170" y="1112" fill="#94A3B8">Marketplace</text>
+
+    <g transform="translate(280 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="-1" cy="-4" r="4"/>
+      <path d="M-8 9a8 8 0 0 1 14 -1"/>
+      <circle cx="7" cy="-2" r="3"/>
+    </g>
+    <text x="280" y="1112" fill="#94A3B8">Services</text>
+
+    <g transform="translate(390 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-8 -4h14 l-3 -3 M6 4h-14 l3 3"/>
+    </g>
+    <text x="390" y="1112" fill="#94A3B8">Easyswap</text>
+
+    <g transform="translate(490 1078)" stroke="#94A3B8" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-10 -6h20v12h-20z"/>
+      <circle cx="5" cy="0" r="2.2" fill="#94A3B8"/>
+    </g>
+    <text x="490" y="1112" fill="#94A3B8">Wallet</text>
+  </g>
+</svg>
