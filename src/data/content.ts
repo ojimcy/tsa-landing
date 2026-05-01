@@ -20,7 +20,14 @@ export const site = {
   domain: "tsaconnectworld.com",
   supportEmail: "support@tsaconnectworld.com",
   socialX: "TSA CONNECT",
-  attribution: ["Founder", "MCGPchain", "BNP Africa"],
+  socialXUrl: "https://x.com/tsaconnectworld",
+  sharesUrl: "https://tsaconnectworld.com/shares",
+  adminUrl: "https://tsaconnectworld.com/admin",
+  attribution: [
+    { label: "Founder", href: "https://x.com/OBAINO4CHRISTT" },
+    { label: "MCGPchain", href: "https://x.com/MCGPchain" },
+    { label: "BNP Africa", href: "https://x.com/bnpafrica" },
+  ],
 };
 
 export const hero = {

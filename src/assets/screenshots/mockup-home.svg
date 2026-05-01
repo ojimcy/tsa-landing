@@ -73,7 +73,7 @@
   <circle cx="64" cy="552" r="22" fill="#E8A14A"/>
   <text x="64" y="560" text-anchor="middle" font-size="18" font-weight="800" fill="#FFFFFF">M</text>
   <text x="100" y="548" font-size="18" font-weight="700" fill="#0F172A">MCGP</text>
-  <text x="100" y="572" font-size="13" fill="#64748B">Mason Capital Gold Point</text>
+  <text x="100" y="572" font-size="13" fill="#64748B">MCG Protocol</text>
   <text x="496" y="548" text-anchor="end" font-size="18" font-weight="700" fill="#0F172A">85.00</text>
   <text x="496" y="572" text-anchor="end" font-size="13" fill="#64748B">$1.70</text>
   <line x1="44" y1="600" x2="496" y2="600" stroke="#E2E8F0"/>
