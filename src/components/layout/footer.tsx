@@ -29,7 +29,7 @@ export function Footer() {
             links={[
               { label: "Features", href: "#features" },
               { label: "How it works", href: "#how-it-works" },
-              { label: "Shares", href: site.sharesUrl },
+              { label: "Shares", href: site.sharesAnchor },
               { label: "Admin Portal", href: site.adminUrl },
               { label: "Download", href: "#download" },
             ]}

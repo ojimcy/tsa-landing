@@ -21,7 +21,7 @@ export const site = {
   supportEmail: "support@tsaconnectworld.com",
   socialX: "TSA CONNECT",
   socialXUrl: "https://x.com/tsaconnectworld",
-  sharesUrl: "https://tsaconnectworld.com/shares",
+  sharesAnchor: "#private-sale",
   adminUrl: "https://tsaconnectworld.com/admin",
   attribution: [
     { label: "Founder", href: "https://x.com/OBAINO4CHRISTT" },

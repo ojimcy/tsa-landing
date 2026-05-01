@@ -5,8 +5,7 @@ import logo from "@/assets/logo.png";
 const navLinks = [
   { label: "Features", href: "#features" },
   { label: "How it works", href: "#how-it-works" },
-  { label: "Private Sale", href: "#private-sale" },
-  { label: "Shares", href: site.sharesUrl },
+  { label: "Shares", href: site.sharesAnchor },
   { label: "Download", href: "#download" },
 ];
 
