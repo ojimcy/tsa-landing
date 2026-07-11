@@ -3,10 +3,11 @@ import { site } from "@/data/content";
 import logo from "@/assets/logo.png";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
+  { label: "Features", href: "/#features" },
+  { label: "How it works", href: "/#how-it-works" },
   { label: "Shares", href: site.sharesAnchor },
-  { label: "Download", href: "#download" },
+  { label: "About", href: "/about" },
+  { label: "Download", href: "/#download" },
 ];
 
 export function Header() {
@@ -14,11 +15,9 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-slate-200/70 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
-          href={site.socialXUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/"
           className="flex items-center gap-2.5"
-          aria-label={`${site.name} on X`}
+          aria-label={site.name}
         >
           <img src={logo} alt="" className="h-8 w-8 rounded-md object-cover" />
           <span className="text-base font-semibold tracking-tight text-slate-900">
@@ -46,7 +45,7 @@ export function Header() {
         </nav>
 
         <Button asChild size="sm">
-          <a href="#download">Get notified</a>
+          <a href="/#download">Get notified</a>
         </Button>
       </div>
     </header>

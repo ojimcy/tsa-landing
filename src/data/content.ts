@@ -19,9 +19,10 @@ export const site = {
   tagline: "Connect The World",
   domain: "tsaconnectworld.com",
   supportEmail: "support@tsaconnectworld.com",
+  founderEmail: "obic@tsaconnectworld.com",
   socialX: "TSA CONNECT",
   socialXUrl: "https://x.com/tsaconnectworld",
-  sharesAnchor: "#private-sale",
+  sharesAnchor: "/#private-sale",
   adminUrl: "https://tsaconnectworld.com/admin",
   attribution: [
     { label: "Founder", href: "https://x.com/OBAINO4CHRISTT" },
@@ -29,6 +30,40 @@ export const site = {
     { label: "BNP Africa", href: "https://x.com/bnpafrica" },
   ],
 };
+
+export const about = {
+  companyName: "Obaino4Christ Business International Connectors Ltd",
+  companyRc: "RC 1897254",
+  launchDate: "July 2026",
+  intro:
+    "TSA Connect World is owned and operated by Obaino4Christ Business International Connectors Ltd (RC 1897254), a duly registered company dedicated to connecting businesses, creating opportunities, and delivering value through innovative digital solutions.",
+  paragraphs: [
+    "Our flagship platform, the TSA Connect App, is a non-custodial wallet and decentralized marketplace that enables users to maintain full control of their digital assets. The platform is designed to support stablecoins, crypto-to-fiat swaps, and digital payment services, including Peer-to-Peer (P2P), Payment Merchant (PM), Instant Transfer (IT), and Instant Pay.",
+    "To foster a secure and trusted ecosystem, KYC verification is mandatory for participation in the products and services marketplace and for payment services (P2P, PM, IT, and Instant Pay). KYC is not required for decentralized on-chain crypto spot trading and token swaps, where users interact directly with blockchain protocols while retaining custody of their assets.",
+    "The platform also provides a marketplace where buyers and merchants can trade products and services (real world marketplace, RWM), together with decentralized on-chain crypto spot and swap trading. Fiat payment and settlement services are intended to be delivered through API integrations with appropriately licensed financial technology providers, enabling secure and compliant payment processing.",
+  ],
+  mission:
+    "Our mission is to build a secure, transparent, and accessible ecosystem that empowers businesses and individuals to connect, transact, and grow with confidence.",
+};
+
+export type ContactChannel = {
+  title: string;
+  description: string;
+  email: string;
+};
+
+export const contactChannels: ContactChannel[] = [
+  {
+    title: "Support & Founder",
+    description: "General enquiries, partnerships, and founder contact.",
+    email: site.founderEmail,
+  },
+  {
+    title: "Customer Support",
+    description: "Help with your account, wallet, or a transaction.",
+    email: site.supportEmail,
+  },
+];
 
 export const hero = {
   eyebrow: "Welcome to TSA Connect",

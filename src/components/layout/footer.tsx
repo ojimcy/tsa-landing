@@ -1,4 +1,4 @@
-import { site } from "@/data/content";
+import { site, contactChannels } from "@/data/content";
 import logo from "@/assets/logo.png";
 
 export function Footer() {
@@ -27,29 +27,22 @@ export function Footer() {
           <FooterColumn
             title="Product"
             links={[
-              { label: "Features", href: "#features" },
-              { label: "How it works", href: "#how-it-works" },
+              { label: "Features", href: "/#features" },
+              { label: "How it works", href: "/#how-it-works" },
               { label: "Shares", href: site.sharesAnchor },
               { label: "Admin Portal", href: site.adminUrl },
-              { label: "Download", href: "#download" },
+              { label: "Download", href: "/#download" },
             ]}
           />
 
           <FooterColumn
-            title="Support"
+            title="Company"
             links={[
-              {
-                label: site.supportEmail,
-                href: `mailto:${site.supportEmail}`,
-              },
-              {
-                label: "Partnership & inquiry",
-                href: `mailto:${site.supportEmail}?subject=Partnership%20%26%20Inquiry`,
-              },
-              {
-                label: "Report a problem",
-                href: `mailto:${site.supportEmail}?subject=Report%20%2F%20Complaint`,
-              },
+              { label: "About us", href: "/about" },
+              ...contactChannels.map((c) => ({
+                label: c.email,
+                href: `mailto:${c.email}`,
+              })),
             ]}
           />
 
