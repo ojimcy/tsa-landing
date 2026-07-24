@@ -39,6 +39,10 @@ export function Footer() {
             title="Company"
             links={[
               { label: "About us", href: "/about" },
+              // Submitted to the app stores as the policy URLs — keep these
+              // reachable from every page.
+              { label: "Privacy Policy", href: "/privacy" },
+              { label: "Terms of Service", href: "/terms" },
               ...contactChannels.map((c) => ({
                 label: c.email,
                 href: `mailto:${c.email}`,
