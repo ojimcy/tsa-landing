@@ -5,6 +5,7 @@ import App from './app';
 import AboutPage from './pages/about';
 import PrivacyPage from './pages/privacy';
 import TermsPage from './pages/terms';
+import DeleteAccountPage from './pages/delete-account';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -17,6 +18,9 @@ createRoot(document.getElementById('root')!).render(
             these paths must stay stable. */}
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        {/* Submitted to Apple (5.1.1(v)) and Google Play as the account-deletion
+            URL — must stay reachable without signing in. */}
+        <Route path="/delete-account" element={<DeleteAccountPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
