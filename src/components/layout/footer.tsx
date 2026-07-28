@@ -43,6 +43,7 @@ export function Footer() {
               // reachable from every page.
               { label: "Privacy Policy", href: "/privacy" },
               { label: "Terms of Service", href: "/terms" },
+              { label: "Delete your account", href: "/delete-account" },
               ...contactChannels.map((c) => ({
                 label: c.email,
                 href: `mailto:${c.email}`,
