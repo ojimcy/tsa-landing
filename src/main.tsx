@@ -6,6 +6,8 @@ import AboutPage from './pages/about';
 import PrivacyPage from './pages/privacy';
 import TermsPage from './pages/terms';
 import DeleteAccountPage from './pages/delete-account';
+import PayPage from './pages/pay';
+import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(
@@ -21,6 +23,9 @@ createRoot(document.getElementById('root')!).render(
         {/* Submitted to Apple (5.1.1(v)) and Google Play as the account-deletion
             URL — must stay reachable without signing in. */}
         <Route path="/delete-account" element={<DeleteAccountPage />} />
+        {/* TSA Pay hosted checkout — a shared payment link, no sign-in. */}
+        <Route path="/pay/:id" element={<PayPage />} />
+        <Route path="/developers/tsa-pay" element={<DevelopersTsaPayPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
