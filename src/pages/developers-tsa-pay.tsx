@@ -12,17 +12,20 @@ const VERIFY_WEBHOOK_NODE = `const crypto = require("crypto");
 
 function verifyWebhook(rawBody, header, whsec) {
   const parts = Object.fromEntries(
-    header.split(",").map((p) => p.split("=")),
+    header.split(",").map((p) => p.trim().split("=")),
   );
-  const { t, v1 } = parts;
-  if (Date.now() / 1000 - Number(t) > 300) throw new Error("stale");
+  const t = Number(parts.t);
+  // Reject a missing/garbled timestamp, and one too old OR too far in the future.
+  if (!Number.isFinite(t) || Math.abs(Date.now() / 1000 - t) > 300) {
+    throw new Error("stale");
+  }
 
-  const expected = crypto
-    .createHmac("sha256", whsec)
-    .update(\`\${t}.\${rawBody}\`)
-    .digest("hex");
-
-  if (!crypto.timingSafeEqual(Buffer.from(v1), Buffer.from(expected))) {
+  const expected = Buffer.from(
+    crypto.createHmac("sha256", whsec).update(\`\${parts.t}.\${rawBody}\`).digest("hex"),
+  );
+  const received = Buffer.from(parts.v1 ?? "");
+  // timingSafeEqual throws on unequal lengths, so compare lengths first.
+  if (received.length !== expected.length || !crypto.timingSafeEqual(received, expected)) {
     throw new Error("bad signature");
   }
 }`;
@@ -127,7 +130,7 @@ export default function DevelopersTsaPayPage() {
                 for that event's mode.
               </p>
               <ul className="mt-3 list-disc space-y-1.5 pl-5">
-                <li>Reject any <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">t</code> more than 5 minutes old.</li>
+                <li>Reject any <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">t</code> that is missing, or more than 5 minutes away from your clock (old or in the future).</li>
                 <li>
                   Check <code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">livemode</code> — it's a
                   top-level field on the event (<code className="rounded bg-slate-100 px-1.5 py-0.5 text-sm">{"{id, type, livemode, created, data}"}</code>),
