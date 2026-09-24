@@ -33,7 +33,11 @@ export function Hero() {
           <Reveal delay={240}>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <a href={hero.primaryCta.href}>
+                <a
+                  href={hero.primaryCta.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {hero.primaryCta.label}
                   <ArrowRight className="h-4 w-4" />
                 </a>
@@ -46,7 +50,7 @@ export function Hero() {
 
           <Reveal delay={320}>
             <p className="mt-6 text-xs text-slate-500">
-              Available soon on App Store, Google Play, and Amazon Appstore.
+              {hero.availability}
             </p>
           </Reveal>
         </div>
