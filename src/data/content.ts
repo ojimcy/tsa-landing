@@ -6,6 +6,8 @@ import {
   Coins,
   Banknote,
   ShieldCheck,
+  Receipt,
+  Handshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -24,6 +26,8 @@ export const site = {
   socialXUrl: "https://x.com/tsaconnectworld",
   sharesAnchor: "/#private-sale",
   adminUrl: "https://tsaconnectworld.com/admin",
+  playStoreUrl:
+    "https://play.google.com/store/apps/details?id=com.tsaconnectworld.mobile",
   attribution: [
     { label: "Founder", href: "https://x.com/OBAINO4CHRISTT" },
     { label: "MCGPchain", href: "https://x.com/MCGPchain" },
@@ -69,9 +73,10 @@ export const hero = {
   eyebrow: "Welcome to TSA Connect",
   headline: "Connect The World",
   subheadline:
-    "Buy, sell, pay, swap, and earn — globally, with stablecoins, on a decentralized marketplace built for the way you actually live.",
-  primaryCta: { label: "Get the app — coming soon", href: "#download" },
+    "Buy, sell, pay, swap, and earn — globally, with stablecoins, on a decentralized marketplace built for the way you actually live. Cash out to your bank in minutes.",
+  primaryCta: { label: "Get it on Google Play", href: site.playStoreUrl },
   secondaryCta: { label: "How it works", href: "#how-it-works" },
+  availability: "Available now on Google Play. App Store coming soon.",
 };
 
 export type Feature = {
@@ -100,9 +105,21 @@ export const features: Feature[] = [
     icon: Wallet,
   },
   {
+    title: "Crypto to cash",
+    description:
+      "Sell USDT or USDC and get naira paid straight into your Nigerian bank account — or buy stablecoins with a simple bank transfer. Live rates, fees shown upfront.",
+    icon: Banknote,
+  },
+  {
+    title: "Pay your bills",
+    description:
+      "Top up airtime and data, pay electricity and cable TV right from the app — no bank card needed.",
+    icon: Receipt,
+  },
+  {
     title: "Easy swap",
     description:
-      "Swap MCGP assets, listed spot pairs, and any token onchain — including everything indexed on CoinMarketCap, CoinGecko, and Dexscreener.",
+      "Swap across chains in one tap — MCGP, spot pairs, and any token onchain, including everything indexed on CoinMarketCap, CoinGecko, and Dexscreener.",
     icon: ArrowLeftRight,
   },
   {
@@ -114,13 +131,13 @@ export const features: Feature[] = [
   {
     title: "P2P & merchant ramp",
     description:
-      "Move between fiat and crypto seamlessly through approved P2P traders and Payment Merchants — secure on/off-ramp, no friction.",
-    icon: Banknote,
+      "Trade directly with approved P2P traders and Payment Merchants, with funds held in onchain escrow until both sides deliver.",
+    icon: Handshake,
   },
   {
     title: "Self-custody wallet",
     description:
-      "Not your keys, not your coins. TSA Connect doesn't custody funds — you own your wallet and marketplace, with KYC keeping you protected.",
+      "Not your keys, not your coins. One wallet for EVM chains, Solana and Sui — TSA Connect never holds your keys, and KYC keeps the marketplace safe.",
     icon: ShieldCheck,
   },
 ];
@@ -157,11 +174,13 @@ export const steps: Step[] = [
 export type StoreBadge = {
   store: string;
   caption: string;
+  /** Set once the listing is live; badges without one render as "coming soon". */
+  href?: string;
 };
 
 export const storeBadges: StoreBadge[] = [
+  { store: "Google Play", caption: "Get it on", href: site.playStoreUrl },
   { store: "App Store", caption: "Download on the" },
-  { store: "Google Play", caption: "Get it on" },
   { store: "Amazon Appstore", caption: "Available at" },
 ];
 

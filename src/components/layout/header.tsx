@@ -45,7 +45,9 @@ export function Header() {
         </nav>
 
         <Button asChild size="sm">
-          <a href="/#download">Get notified</a>
+          <a href={site.playStoreUrl} target="_blank" rel="noopener noreferrer">
+            Get the app
+          </a>
         </Button>
       </div>
     </header>
