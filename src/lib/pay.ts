@@ -2,6 +2,10 @@ import { API_URL } from "@/lib/api";
 
 export type PaymentStatus = "pending" | "processing" | "succeeded" | "failed" | "expired";
 
+export type PaymentMode = "live" | "test";
+
+export type PaymentSource = "api" | "link";
+
 export type PublicPayment = {
   id: string;
   merchantName: string;
@@ -12,6 +16,16 @@ export type PublicPayment = {
   expiresAt: string;
   returnUrl?: string;
   appUrl: string;
+  mode?: PaymentMode;
+  source?: PaymentSource;
+  /** What the payment is for — always set on a payment link. */
+  description?: string;
+  /** Who the merchant asked to pay, when they named someone. */
+  customerName?: string;
+  /** The merchant closed the link before it was paid (status reads "expired"). */
+  cancelled?: boolean;
+  /** When it was paid — shown on the receipt when the API sends it. */
+  succeededAt?: string;
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -47,6 +61,38 @@ export function withPaymentParams(returnUrl: string, id: string, status: string)
   url.searchParams.set("payment_id", id);
   url.searchParams.set("status", status);
   return url.toString();
+}
+
+const LAGOS_DATE_TIME = new Intl.DateTimeFormat("en-NG", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  timeZoneName: "short",
+  timeZone: "Africa/Lagos",
+});
+
+/** Formats an ISO timestamp in Lagos time, e.g. "3 Oct 2026, 14:30 WAT"; null if unparseable. */
+export function formatLagosDateTime(iso: string | undefined): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return LAGOS_DATE_TIME.format(date);
+}
+
+/** The headline and next step shown for a payment that can no longer be paid. */
+export function closedPaymentCopy(payment: PublicPayment): { title: string; hint: string } {
+  if (payment.cancelled) {
+    return {
+      title: `This payment link was cancelled by ${payment.merchantName}.`,
+      hint: "Contact them for a new one.",
+    };
+  }
+  if (payment.status === "expired") {
+    return { title: "This payment link has expired.", hint: "Ask the store for a new payment link." };
+  }
+  return { title: "This payment failed.", hint: "Ask the store for a new payment link." };
 }
 
 const FETCH_TIMEOUT_MS = 10_000;

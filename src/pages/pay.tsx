@@ -9,8 +9,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { site } from "@/data/content";
 import {
+  closedPaymentCopy,
   fetchPublicPayment,
   formatKobo,
+  formatLagosDateTime,
   isUuid,
   shouldPollAgain,
   withPaymentParams,
@@ -142,7 +144,7 @@ function LoadingPayment() {
   );
 }
 
-function PaymentStatusView({
+export function PaymentStatusView({
   payment,
   returnHref,
 }: {
@@ -151,50 +153,122 @@ function PaymentStatusView({
 }) {
   return (
     <>
-      <p className="text-sm font-medium uppercase tracking-wider text-slate-400">
+      {payment.mode === "test" && <TestModeBanner />}
+      {/* With nowhere to send the payer back to, the page itself is their proof of payment. */}
+      {payment.status === "succeeded" && !returnHref ? (
+        <PaymentReceipt payment={payment} />
+      ) : (
+        <PaymentSummary payment={payment} returnHref={returnHref} />
+      )}
+    </>
+  );
+}
+
+function TestModeBanner() {
+  return (
+    <p className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-medium text-amber-800">
+      Test payment link — no real money moves.
+    </p>
+  );
+}
+
+function PaymentSummary({
+  payment,
+  returnHref,
+}: {
+  payment: PublicPayment;
+  returnHref: string | null;
+}) {
+  const closed = payment.status === "failed" || payment.status === "expired";
+
+  return (
+    <>
+      <p className="text-sm font-medium uppercase tracking-wider text-slate-400 wrap-anywhere">
         {payment.merchantName}
       </p>
       <p className="mt-2 text-3xl font-bold text-slate-900">
         {formatKobo(payment.customerTotal)}
       </p>
+      {payment.description && (
+        <p className="mt-2 text-base text-slate-700 wrap-anywhere">{payment.description}</p>
+      )}
+      {payment.customerName && (
+        <p className="mt-1 text-sm text-slate-500 wrap-anywhere">Requested for {payment.customerName}</p>
+      )}
 
       {(payment.status === "pending" || payment.status === "processing") && (
         <PendingPayment payment={payment} />
       )}
 
-      {payment.status === "succeeded" && (
+      {payment.status === "succeeded" && returnHref && (
         <div className="mt-6">
           <CheckCircle2 className="mx-auto h-10 w-10 text-green-600" />
           <p className="mt-3 text-base font-semibold text-green-700">Paid</p>
-          {returnHref && (
-            <Button asChild size="lg" className="mt-6 w-full">
-              <a href={returnHref}>Return to {payment.merchantName}</a>
-            </Button>
-          )}
+          <Button asChild size="lg" className="mt-6 h-auto w-full whitespace-normal py-3 wrap-anywhere">
+            <a href={returnHref}>Return to {payment.merchantName}</a>
+          </Button>
         </div>
       )}
 
-      {(payment.status === "failed" || payment.status === "expired") && (
-        <div className="mt-6">
-          <XCircle className="mx-auto h-10 w-10 text-red-500" />
-          <p className="mt-3 text-base font-semibold text-slate-700">
-            {payment.status === "expired" ? "This payment link has expired." : "This payment failed."}
-          </p>
-          <p className="mt-2 text-sm text-slate-500">Ask the store for a new payment link.</p>
-        </div>
-      )}
+      {closed && <ClosedPayment payment={payment} />}
+    </>
+  );
+}
+
+function ClosedPayment({ payment }: { payment: PublicPayment }) {
+  const { title, hint } = closedPaymentCopy(payment);
+  return (
+    <div className="mt-6">
+      <XCircle className="mx-auto h-10 w-10 text-red-500" />
+      <p className="mt-3 text-base font-semibold text-slate-700 wrap-anywhere">{title}</p>
+      <p className="mt-2 text-sm text-slate-500">{hint}</p>
+    </div>
+  );
+}
+
+function PaymentReceipt({ payment }: { payment: PublicPayment }) {
+  const paidAt = formatLagosDateTime(payment.succeededAt);
+  const rows: [string, string | null | undefined][] = [
+    ["Paid to", payment.merchantName],
+    ["For", payment.description],
+    ["Requested for", payment.customerName],
+    ["Paid on", paidAt],
+  ];
+
+  return (
+    <>
+      <CheckCircle2 className="mx-auto h-10 w-10 text-green-600" />
+      <p className="mt-3 text-base font-semibold text-green-700">Paid</p>
+      <p className="mt-2 text-3xl font-bold text-slate-900">
+        {formatKobo(payment.customerTotal)}
+      </p>
+      <dl className="mt-6 divide-y divide-slate-100 rounded-xl border border-slate-200 text-left text-sm">
+        {rows
+          .filter(([, value]) => value)
+          .map(([label, value]) => (
+            <div key={label} className="flex justify-between gap-4 px-4 py-3">
+              <dt className="text-slate-500">{label}</dt>
+              <dd className="min-w-0 text-right font-medium text-slate-900 wrap-anywhere">{value}</dd>
+            </div>
+          ))}
+      </dl>
+      <p className="mt-4 text-xs text-slate-500">Keep this page as your receipt.</p>
     </>
   );
 }
 
 function PendingPayment({ payment }: { payment: PublicPayment }) {
   const mobile = isMobile();
+  const openUntil = formatLagosDateTime(payment.expiresAt);
 
   return (
     <div className="mt-6">
       <p className="text-xs font-medium uppercase tracking-wider text-brand">
         {payment.status === "processing" ? "Processing" : "Awaiting payment"}
       </p>
+      {payment.status === "pending" && openUntil && (
+        <p className="mt-1 text-xs text-slate-500">Link open until {openUntil}</p>
+      )}
 
       {mobile ? (
         <div className="mt-4 space-y-3">

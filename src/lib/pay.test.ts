@@ -1,5 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchPublicPayment, formatKobo, isUuid, shouldPollAgain, withPaymentParams } from './pay';
+import {
+  closedPaymentCopy,
+  fetchPublicPayment,
+  formatKobo,
+  formatLagosDateTime,
+  isUuid,
+  shouldPollAgain,
+  withPaymentParams,
+  type PublicPayment,
+} from './pay';
 
 const ID = '3f2c1a9e-8b7d-4c6e-9f10-1a2b3c4d5e6f';
 
@@ -65,5 +74,31 @@ describe('pay helpers', () => {
       vi.fn().mockRejectedValue(new TypeError('Failed to fetch')),
     );
     await expect(fetchPublicPayment(ID)).rejects.toThrow('Unable to load this payment. Please try again.');
+  });
+  it('formats a timestamp in Lagos time, not the viewer\'s', () => {
+    // 13:30 UTC is 14:30 in Lagos (UTC+1, no daylight saving).
+    const text = formatLagosDateTime('2026-10-03T13:30:00Z');
+    expect(text).toContain('3 Oct 2026');
+    expect(text).toContain('14:30');
+    expect(formatLagosDateTime(undefined)).toBeNull();
+    expect(formatLagosDateTime('not a date')).toBeNull();
+  });
+  it('tells a cancelled link apart from an expired or failed one', () => {
+    const base: PublicPayment = {
+      id: ID,
+      merchantName: 'Ada Bakes',
+      status: 'expired',
+      amount: 500_000,
+      customerTotal: 500_000,
+      currency: 'NGN',
+      expiresAt: '2026-10-03T13:30:00Z',
+      appUrl: `tsaconnect://pay?id=${ID}`,
+    };
+    expect(closedPaymentCopy({ ...base, cancelled: true })).toEqual({
+      title: 'This payment link was cancelled by Ada Bakes.',
+      hint: 'Contact them for a new one.',
+    });
+    expect(closedPaymentCopy(base).title).toBe('This payment link has expired.');
+    expect(closedPaymentCopy({ ...base, status: 'failed' }).title).toBe('This payment failed.');
   });
 });
