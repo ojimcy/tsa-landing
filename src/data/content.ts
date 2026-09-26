@@ -24,6 +24,8 @@ export const site = {
   socialXUrl: "https://x.com/tsaconnectworld",
   sharesAnchor: "/#private-sale",
   adminUrl: "https://tsaconnectworld.com/admin",
+  playStoreUrl:
+    "https://play.google.com/store/apps/details?id=com.tsaconnectworld.mobile",
   attribution: [
     { label: "Founder", href: "https://x.com/OBAINO4CHRISTT" },
     { label: "MCGPchain", href: "https://x.com/MCGPchain" },
@@ -164,6 +166,12 @@ export const storeBadges: StoreBadge[] = [
   { store: "Google Play", caption: "Get it on" },
   { store: "Amazon Appstore", caption: "Available at" },
 ];
+
+/**
+ * The iOS App Store listing. Null until the app is live there — the TSA Pay
+ * pages show only the Google Play button while it's null.
+ */
+export const appStoreUrl: string | null = null;
 
 export const privateSale = {
   title: "Private Share Sales",

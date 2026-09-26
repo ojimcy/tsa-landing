@@ -7,6 +7,7 @@ import PrivacyPage from './pages/privacy';
 import TermsPage from './pages/terms';
 import DeleteAccountPage from './pages/delete-account';
 import PayPage from './pages/pay';
+import PayOpenLinkPage from './pages/pay-open-link';
 import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
 
@@ -25,6 +26,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/delete-account" element={<DeleteAccountPage />} />
         {/* TSA Pay hosted checkout — a shared payment link, no sign-in. */}
         <Route path="/pay/:id" element={<PayPage />} />
+        {/* TSA Pay reusable link (e.g. a shop's printed QR) — the payer types the amount. */}
+        <Route path="/pay/l/:slug" element={<PayOpenLinkPage />} />
         <Route path="/developers/tsa-pay" element={<DevelopersTsaPayPage />} />
       </Routes>
     </BrowserRouter>

@@ -103,4 +103,45 @@ describe('PaymentStatusView', () => {
     expect(html).toContain('₦15,000.00');
     expect(html).not.toContain('Requested for');
   });
+
+  it('points a payer without the app to Google Play while the payment is open', () => {
+    const html = render(link);
+    expect(html).toContain('Don&#x27;t have TSA Connect? Get the app, sign up, then come back to this link.');
+    expect(html).toContain('href="https://play.google.com/store/apps/details?id=com.tsaconnectworld.mobile"');
+    // No App Store listing yet.
+    expect(html).not.toContain('App Store');
+    expect(render({ ...link, status: 'succeeded' })).not.toContain('Get the app');
+  });
+
+  it("shows a reusable link's label as what's paid for, and the payer's note as a note", () => {
+    const open: PublicPayment = {
+      ...link,
+      source: 'open',
+      linkLabel: 'Ada Bakes — Shop 12',
+      description: '2 bags of rice',
+      customerName: undefined,
+    };
+    const html = render(open);
+    expect(html).toContain('Ada Bakes — Shop 12');
+    expect(html).toContain('Note from customer: 2 bags of rice');
+    expect(html).toContain('Pay by 3 Oct 2026');
+    expect(html).not.toContain('Link open until');
+
+    const receipt = render({ ...open, status: 'succeeded' });
+    expect(receipt).toMatch(/For<\/dt><dd[^>]*>Ada Bakes — Shop 12/);
+    expect(receipt).toMatch(/Note from customer<\/dt><dd[^>]*>2 bags of rice/);
+  });
+
+  it('offers to start again when a reusable-link payment timed out', () => {
+    const html = render({
+      ...link,
+      source: 'open',
+      status: 'expired',
+      openLinkUrl: 'https://tsaconnectworld.com/pay/l/ada-bakes-7k3q',
+    });
+    expect(html).toContain('This payment timed out.');
+    expect(html).toContain('href="https://tsaconnectworld.com/pay/l/ada-bakes-7k3q"');
+    expect(html).toContain('Start a new payment');
+    expect(html).not.toContain('Ask the store');
+  });
 });
