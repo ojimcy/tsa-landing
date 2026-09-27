@@ -11,12 +11,12 @@ import {
   formatLagosDateTime,
   isUuid,
   paymentPurpose,
+  pollDelayMs,
   shouldPollAgain,
   withPaymentParams,
   type PublicPayment,
 } from "@/lib/pay";
 
-const POLL_INTERVAL_MS = 5000;
 const INVALID_LINK = "This payment link isn't valid.";
 
 const isMobile = () => /Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -41,20 +41,37 @@ export default function PayPage() {
 
     let cancelled = false;
     let fetchedOnce = false;
+    let consecutiveErrors = 0;
+    let inFlight = false;
+    // True while another check is due: scheduled, or held back by a hidden tab.
+    let polling = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
+    const schedule = (delay: number) => {
+      polling = true;
+      timer = setTimeout(() => {
+        timer = undefined;
+        // A background tab doesn't poll; the visibility listener picks it up again.
+        if (!document.hidden) tick();
+      }, delay);
+    };
+
     const tick = async () => {
+      polling = false;
+      inFlight = true;
       try {
         const result = await fetchPublicPayment(id);
         if (cancelled) return;
         fetchedOnce = true;
+        consecutiveErrors = 0;
         setPayment(result);
         setError("");
         if (shouldPollAgain({ fetchedOnce, error: false, status: result.status })) {
-          timer = setTimeout(tick, POLL_INTERVAL_MS);
+          schedule(pollDelayMs(0));
         }
       } catch (err) {
         if (cancelled) return;
+        consecutiveErrors++;
         // A transient error after we've already confirmed the payment exists
         // must not surface as a fatal error or stop polling — only the very
         // first fetch failing is fatal (nothing to retry toward yet).
@@ -62,16 +79,28 @@ export default function PayPage() {
           setError(err instanceof Error ? err.message : "Unable to load this payment.");
         }
         if (shouldPollAgain({ fetchedOnce, error: true })) {
-          timer = setTimeout(tick, POLL_INTERVAL_MS);
+          schedule(pollDelayMs(consecutiveErrors));
         }
+      } finally {
+        inFlight = false;
       }
       if (!cancelled) setLoading(false);
     };
 
+    // Back in view: check straight away rather than wait out the interval.
+    const onVisibilityChange = () => {
+      if (document.hidden || !polling || inFlight) return;
+      if (timer) clearTimeout(timer);
+      timer = undefined;
+      tick();
+    };
+
+    document.addEventListener("visibilitychange", onVisibilityChange);
     tick();
 
     return () => {
       cancelled = true;
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       if (timer) clearTimeout(timer);
     };
   }, [validId, id, retryKey]);

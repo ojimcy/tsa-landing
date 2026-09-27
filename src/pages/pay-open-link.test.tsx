@@ -214,4 +214,32 @@ describe('open link page', () => {
     const wrapped = [...container.querySelectorAll('.wrap-anywhere')].filter((el) => el.textContent === long);
     expect(wrapped).toHaveLength(2);
   });
+
+  it('accepts an upper-case slug, since the server lowercases it', async () => {
+    const f = vi.fn().mockResolvedValue(ok(link));
+    vi.stubGlobal('fetch', f);
+    await renderAt('/pay/l/Mama-Ngozi-Store-7K3Q');
+    expect(f).toHaveBeenCalledTimes(1);
+    expect(text()).toContain('Rice and beans — Shop 12');
+  });
+
+  it('shows the load error, not the closed wording, for an unreadable response', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockReturnValue(Promise.resolve({ ok: true, status: 200, json: async () => { throw 'nope'; } })));
+    await renderAt(`/pay/l/${SLUG}`);
+    expect(text()).toContain('Unable to load this payment link. Please try again.');
+    expect(text()).not.toContain("isn't accepting payments");
+  });
+
+  it('marks the amount invalid when it is refused, and hints "Up to" when there is no minimum', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(ok({ ...link, minAmount: 0 })));
+    await renderAt(`/pay/l/${SLUG}`);
+    expect(text()).toContain('Up to ₦500,000.00');
+    expect(text()).not.toContain('Between');
+    const amount = container.querySelector('#link-amount')!;
+    expect(amount.getAttribute('aria-invalid')).toBeNull();
+    type('#link-amount', '600000');
+    await pressContinue();
+    expect(amount.getAttribute('aria-invalid')).toBe('true');
+    expect(amount.getAttribute('aria-describedby')).toContain('link-error');
+  });
 });

@@ -10,6 +10,7 @@ import {
   isLinkSlug,
   isOpenLinkClosedError,
   isUuid,
+  OPEN_LINK_LOAD_ERROR,
   resolveOpenLinkAmount,
   type PublicOpenLink,
 } from "@/lib/pay";
@@ -53,7 +54,7 @@ export default function PayOpenLinkPage() {
         setState(
           isOpenLinkClosedError(err)
             ? { kind: "closed" }
-            : { kind: "error", message: err instanceof Error ? err.message : LINK_CLOSED },
+            : { kind: "error", message: err instanceof Error ? err.message : OPEN_LINK_LOAD_ERROR },
         );
       },
     );
@@ -114,6 +115,7 @@ function OpenLinkCheckout({
   const [amountText, setAmountText] = useState("");
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [amountInvalid, setAmountInvalid] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const submit = async (e: FormEvent) => {
@@ -123,10 +125,12 @@ function OpenLinkCheckout({
     const resolved = resolveOpenLinkAmount(link, amountText);
     if ("error" in resolved) {
       setError(resolved.error);
+      setAmountInvalid(true);
       return;
     }
 
     setError("");
+    setAmountInvalid(false);
     setSubmitting(true);
     try {
       const payment = await createOpenLinkPayment(slug, { amount: resolved.amount, note: note.trim() });
@@ -167,12 +171,15 @@ function OpenLinkCheckout({
               value={amountText}
               onChange={(e) => setAmountText(e.target.value)}
               placeholder="0.00"
-              aria-describedby="link-amount-hint"
+              aria-invalid={amountInvalid || undefined}
+              aria-describedby={amountInvalid ? "link-amount-hint link-error" : "link-amount-hint"}
               className={`${INPUT_CLASS} pl-9`}
             />
           </div>
           <p id="link-amount-hint" className="mt-1.5 text-xs text-slate-500">
-            Between {formatKobo(link.minAmount)} and {formatKobo(link.maxAmount)}
+            {link.minAmount > 0
+              ? `Between ${formatKobo(link.minAmount)} and ${formatKobo(link.maxAmount)}`
+              : `Up to ${formatKobo(link.maxAmount)}`}
           </p>
         </div>
 
@@ -194,6 +201,7 @@ function OpenLinkCheckout({
 
         {error && (
           <p
+            id="link-error"
             role="alert"
             className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 wrap-anywhere"
           >

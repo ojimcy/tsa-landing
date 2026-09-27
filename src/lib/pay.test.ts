@@ -9,8 +9,10 @@ import {
   isLinkSlug,
   isOpenLinkClosedError,
   isUuid,
+  ownOpenLinkUrl,
   parseNairaToKobo,
   paymentPurpose,
+  pollDelayMs,
   resolveOpenLinkAmount,
   shouldPollAgain,
   withPaymentParams,
@@ -132,8 +134,28 @@ describe('pay helpers', () => {
       hint: 'Ask the store for a new payment link.',
     });
     expect(closedPaymentCopy({ ...open, openLinkUrl: 'javascript:alert(1)' }).restartHref).toBeUndefined();
+    // A failed payment can be started again the same way.
+    expect(closedPaymentCopy({ ...open, status: 'failed', openLinkUrl: url })).toEqual({
+      title: 'This payment failed.',
+      restartHref: url,
+    });
     // A one-time link keeps its own wording.
     expect(closedPaymentCopy({ ...open, source: 'link', openLinkUrl: url }).title).toBe('This payment link has expired.');
+  });
+  it('only sends the payer back to a reusable link on our own checkout host', () => {
+    expect(ownOpenLinkUrl('https://tsaconnectworld.com/pay/l/ada-7k3q')).toBe('https://tsaconnectworld.com/pay/l/ada-7k3q');
+    expect(ownOpenLinkUrl('https://www.tsaconnectworld.com/pay/l/ada-7k3q')).toBe('https://www.tsaconnectworld.com/pay/l/ada-7k3q');
+    expect(ownOpenLinkUrl('https://evil.example/pay/l/ada-7k3q')).toBeNull();
+    expect(ownOpenLinkUrl('https://tsaconnectworld.com.evil.example/pay/l/ada-7k3q')).toBeNull();
+    expect(ownOpenLinkUrl('http://tsaconnectworld.com/pay/l/ada-7k3q')).toBeNull();
+    expect(ownOpenLinkUrl('https://tsaconnectworld.com/admin')).toBeNull();
+    expect(ownOpenLinkUrl(undefined)).toBeNull();
+  });
+  it('backs off after failed status checks, up to a minute', () => {
+    expect(pollDelayMs(0)).toBe(5000);
+    expect(pollDelayMs(1)).toBe(10_000);
+    expect(pollDelayMs(2)).toBe(20_000);
+    expect(pollDelayMs(10)).toBe(60_000);
   });
   it("uses a reusable link's label as what's paid for, and the description as the payer's note", () => {
     const base = { description: '2 bags of rice', linkLabel: 'Ada Bakes — Shop 12' } as PublicPayment;
@@ -158,7 +180,9 @@ describe('open link helpers', () => {
 
   it('recognises link slugs', () => {
     expect(isLinkSlug(SLUG)).toBe(true);
-    expect(isLinkSlug('Mama-Ngozi')).toBe(false);
+    // The server lowercases slugs, so a shouted QR still works.
+    expect(isLinkSlug('Mama-Ngozi')).toBe(true);
+    expect(isLinkSlug('mama--ngozi')).toBe(false);
     expect(isLinkSlug('../x')).toBe(false);
     expect(isLinkSlug('a'.repeat(65))).toBe(false);
   });

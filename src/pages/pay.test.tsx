@@ -144,4 +144,15 @@ describe('PaymentStatusView', () => {
     expect(html).toContain('Start a new payment');
     expect(html).not.toContain('Ask the store');
   });
+
+  it('offers to start again when a reusable-link payment failed, but only to our own host', () => {
+    const failed: PublicPayment = { ...link, source: 'open', status: 'failed' };
+    const html = render({ ...failed, openLinkUrl: 'https://tsaconnectworld.com/pay/l/ada-bakes-7k3q' });
+    expect(html).toContain('This payment failed.');
+    expect(html).toContain('Start a new payment');
+
+    const foreign = render({ ...failed, openLinkUrl: 'https://evil.example/pay/l/ada-bakes-7k3q' });
+    expect(foreign).not.toContain('Start a new payment');
+    expect(foreign).toContain('Ask the store for a new payment link.');
+  });
 });

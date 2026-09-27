@@ -1,4 +1,5 @@
 import { API_URL } from "@/lib/api";
+import { site } from "@/data/content";
 
 export type PaymentStatus = "pending" | "processing" | "succeeded" | "failed" | "expired";
 
@@ -104,10 +105,24 @@ export function paymentPurpose(payment: PublicPayment): { paidFor?: string; cust
   return { paidFor: payment.description };
 }
 
+const CHECKOUT_HOSTS: ReadonlySet<string> = new Set([site.domain, `www.${site.domain}`]);
+
+/**
+ * The reusable link to start again from, or null unless it is an https
+ * /pay/l/ page on our own checkout host (this page's origin, or the
+ * production domain) — the payer is sent there without a second look.
+ */
+export function ownOpenLinkUrl(s: string | undefined): string | null {
+  const url = s ? parseHttpsUrl(s) : null;
+  if (!url || !url.pathname.startsWith("/pay/l/")) return null;
+  const ownHost = url.origin === window.location.origin || CHECKOUT_HOSTS.has(url.host);
+  return ownHost ? url.toString() : null;
+}
+
 /**
  * The headline and next step shown for a payment that can no longer be paid.
  * restartHref is set when the payer can simply start again: a payment made
- * through a reusable link that timed out while the link is still open.
+ * through a reusable link that timed out or failed while the link is still open.
  */
 export function closedPaymentCopy(payment: PublicPayment): {
   title: string;
@@ -120,11 +135,10 @@ export function closedPaymentCopy(payment: PublicPayment): {
       hint: "Contact them for a new one.",
     };
   }
-  if (payment.status === "expired" && payment.source === "open") {
-    const restart = payment.openLinkUrl ? parseHttpsUrl(payment.openLinkUrl) : null;
-    return restart
-      ? { title: "This payment timed out.", restartHref: restart.toString() }
-      : { title: "This payment timed out.", hint: "Ask the store for a new payment link." };
+  if (payment.source === "open") {
+    const title = payment.status === "expired" ? "This payment timed out." : "This payment failed.";
+    const restartHref = ownOpenLinkUrl(payment.openLinkUrl);
+    return restartHref ? { title, restartHref } : { title, hint: "Ask the store for a new payment link." };
   }
   if (payment.status === "expired") {
     return { title: "This payment link has expired.", hint: "Ask the store for a new payment link." };
@@ -202,9 +216,12 @@ export type PublicOpenLink = {
 
 const LINK_SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** A link slug is lowercase words joined by hyphens — used to reject junk before hitting the API. */
+/**
+ * A link slug is words joined by hyphens — used to reject junk before hitting
+ * the API. Case doesn't matter: the server lowercases it.
+ */
 export function isLinkSlug(s: string): boolean {
-  return s.length <= 64 && LINK_SLUG_RE.test(s);
+  return s.length <= 64 && LINK_SLUG_RE.test(s.toLowerCase());
 }
 
 /** True when the API says there is no such link, or it has stopped taking payments. */
@@ -215,12 +232,10 @@ export function isOpenLinkClosedError(err: unknown): boolean {
   );
 }
 
+export const OPEN_LINK_LOAD_ERROR = "Unable to load this payment link. Please try again.";
+
 export function fetchPublicOpenLink(slug: string): Promise<PublicOpenLink> {
-  return requestPayApi(
-    `/pay/public/open/${encodeURIComponent(slug)}`,
-    {},
-    "Unable to load this payment link. Please try again.",
-  );
+  return requestPayApi(`/pay/public/open/${encodeURIComponent(slug)}`, {}, OPEN_LINK_LOAD_ERROR);
 }
 
 /** Starts a new payment through an open link; the payer then finishes it on /pay/:id. */
@@ -292,4 +307,16 @@ export function shouldPollAgain(params: {
   if (params.error) return params.fetchedOnce;
   if (!params.status) return false;
   return !isTerminalStatus(params.status);
+}
+
+export const POLL_INTERVAL_MS = 5000;
+const MAX_POLL_INTERVAL_MS = 60_000;
+
+/**
+ * How long to wait before the next status check: the normal interval, doubled
+ * for each failed check in a row (up to a minute), so an API outage isn't met
+ * with a steady stream of requests from every open checkout page.
+ */
+export function pollDelayMs(consecutiveErrors: number): number {
+  return Math.min(POLL_INTERVAL_MS * 2 ** Math.max(consecutiveErrors, 0), MAX_POLL_INTERVAL_MS);
 }
