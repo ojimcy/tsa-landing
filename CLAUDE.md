@@ -69,6 +69,12 @@ Path alias `@/*` → `src/*`.
 
 ## Env
 
-`.env`: `VITE_API_URL` — base URL of the Go API, used only by
-`components/sections/private-sale.tsx` (`POST {VITE_API_URL}/private-sale/submit`). Falls back to
-`http://localhost:5000/api`, which is the backend's default dev port.
+`.env`: `VITE_API_URL` — base URL of the Go API. Resolved in one shared place,
+`src/lib/api.ts`, used by every fetch-calling module:
+`components/sections/private-sale.tsx` (`POST {VITE_API_URL}/private-sale/submit`) and
+`src/lib/pay.ts` (`GET {VITE_API_URL}/pay/public/:id`, polled from `/pay/:id`; and
+`GET`/`POST {VITE_API_URL}/pay/public/open/:slug[/payments]` from the reusable-link page `/pay/l/:slug`). If unset, it
+falls back to `http://localhost:5000/api` (the backend's default dev port) in dev, but to the
+real production API (`https://tsa.mcgpchain.com/api`) in a production build — a production
+build must never silently fall back to localhost. Add any new fetch call through
+`src/lib/api.ts`'s `API_URL` rather than re-reading `import.meta.env.VITE_API_URL` locally.

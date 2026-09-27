@@ -184,6 +184,12 @@ export const storeBadges: StoreBadge[] = [
   { store: "Amazon Appstore", caption: "Available at" },
 ];
 
+/**
+ * The iOS App Store listing. Null until the app is live there — the TSA Pay
+ * pages show only the Google Play button while it's null.
+ */
+export const appStoreUrl: string | null = null;
+
 export const privateSale = {
   title: "Private Share Sales",
   batch: "Batch 1",
