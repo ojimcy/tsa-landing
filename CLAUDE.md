@@ -78,3 +78,23 @@ falls back to `http://localhost:5000/api` (the backend's default dev port) in de
 real production API (`https://tsa.mcgpchain.com/api`) in a production build — a production
 build must never silently fall back to localhost. Add any new fetch call through
 `src/lib/api.ts`'s `API_URL` rather than re-reading `import.meta.env.VITE_API_URL` locally.
+
+## Share previews (Netlify edge functions)
+
+Chat apps don't run the SPA, so a shared `/pay/*` link gets its preview on the server:
+
+- `netlify/edge-functions/pay-meta.ts` — for **link-preview crawlers only** (`isLinkPreviewBot`),
+  swaps the `<!-- share-meta -->` block in `index.html` for per-link tags. Payers get the static
+  page untouched and never wait on the API. `onError: "bypass"`: a failure must never cost a payer
+  the checkout page. `noindex` for everyone comes from `public/_headers`.
+- `netlify/edge-functions/pay-og.ts` — the 1200×630 card at `/og/pay/:id.png` /
+  `/og/pay/l/:slug.png`, always drawn from the API, never from the URL. Only the card's current
+  `?v=` URL renders (any other `v` is redirected to it), so every render is cacheable.
+- Shared logic: `src/lib/pay-share.ts` (tested), which like `pay-core.ts` may only use relative
+  `.ts` imports because Deno loads it. `tsconfig.edge.json` type-checks `netlify/` in `npm run build`.
+- **`satori` is pinned below 0.33**: 0.33 added `harfbuzzjs`, which reads `hb.wasm` from disk and
+  can't load in an edge bundle. Fonts live in `public/og-assets/`; the resvg wasm is copied there
+  from `node_modules` by `npm run build` (`og-wasm`), so it always matches the JS.
+- Edge functions read `VITE_API_URL` from the Netlify site env (falling back to production).
+  Locally: `npm run build`, put `VITE_API_URL` in `.env`, then
+  `npx netlify-cli@latest dev --offline --dir dist`, and curl with `-A WhatsApp/2`.

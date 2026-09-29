@@ -1,0 +1,3 @@
+# Payment pages belong to whoever holds the link: never indexed.
+/pay/*
+  X-Robots-Tag: noindex, nofollow
