@@ -9,6 +9,7 @@ import {
   fetchPublicPayment,
   formatKobo,
   formatLagosDateTime,
+  isHandheld,
   isUuid,
   paymentPurpose,
   pollDelayMs,
@@ -19,7 +20,11 @@ import {
 
 const INVALID_LINK = "This payment link isn't valid.";
 
-const isMobile = () => /Android|iPhone|iPad/i.test(navigator.userAgent);
+const isMobile = () =>
+  isHandheld({
+    userAgent: navigator.userAgent,
+    coarsePointer: globalThis.matchMedia?.("(pointer: coarse)").matches ?? false,
+  });
 
 export default function PayPage() {
   const { id } = useParams<{ id: string }>();
@@ -242,6 +247,9 @@ function PaymentReceipt({ payment }: { payment: PublicPayment }) {
 function PendingPayment({ payment }: { payment: PublicPayment }) {
   const mobile = isMobile();
   const openUntil = formatLagosDateTime(payment.expiresAt);
+  const openApp = () => {
+    window.location.href = payment.appUrl;
+  };
 
   return (
     <div className="mt-6">
@@ -257,13 +265,7 @@ function PendingPayment({ payment }: { payment: PublicPayment }) {
 
       {mobile ? (
         <div className="mt-4">
-          <Button
-            size="lg"
-            className="w-full"
-            onClick={() => {
-              window.location.href = payment.appUrl;
-            }}
-          >
+          <Button size="lg" className="w-full" onClick={openApp}>
             Open TSA Connect
           </Button>
         </div>
@@ -275,6 +277,10 @@ function PendingPayment({ payment }: { payment: PublicPayment }) {
           <p className="max-w-xs text-sm text-slate-500">
             Scan with your phone camera to pay in TSA Connect
           </p>
+          {/* Telling a phone from a desktop is a guess — never leave a payer without the button. */}
+          <Button variant="link" size="sm" onClick={openApp}>
+            Already on your phone? Open TSA Connect
+          </Button>
         </div>
       )}
 
