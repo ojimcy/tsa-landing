@@ -76,6 +76,15 @@ export function withPaymentParams(returnUrl: string, id: string, status: string)
   return url.toString();
 }
 
+/**
+ * True on a phone or tablet, where the app can be opened from this page. The
+ * user agent alone is not enough: Chrome's "Desktop site" mode and iPadOS both
+ * claim to be a desktop, so a touch-first screen counts as well.
+ */
+export function isHandheld(device: { userAgent: string; coarsePointer: boolean }): boolean {
+  return /Android|iPhone|iPad/i.test(device.userAgent) || device.coarsePointer;
+}
+
 const LAGOS_DATE_TIME = new Intl.DateTimeFormat("en-NG", {
   day: "numeric",
   month: "short",

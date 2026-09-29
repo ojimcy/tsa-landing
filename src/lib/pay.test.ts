@@ -6,6 +6,7 @@ import {
   fetchPublicOpenLink,
   formatKobo,
   formatLagosDateTime,
+  isHandheld,
   isLinkSlug,
   isOpenLinkClosedError,
   isUuid,
@@ -24,6 +25,31 @@ const ID = '3f2c1a9e-8b7d-4c6e-9f10-1a2b3c4d5e6f';
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('isHandheld', () => {
+  const ANDROID =
+    'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36';
+  // What Chrome on Android sends with "Desktop site" switched on.
+  const ANDROID_DESKTOP_SITE =
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+  // iPadOS Safari calls itself a Mac.
+  const IPAD =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15';
+
+  it('knows a phone by its user agent', () => {
+    expect(isHandheld({ userAgent: ANDROID, coarsePointer: false })).toBe(true);
+  });
+
+  it('knows a phone that claims to be a desktop by its touch screen', () => {
+    expect(isHandheld({ userAgent: ANDROID_DESKTOP_SITE, coarsePointer: true })).toBe(true);
+    expect(isHandheld({ userAgent: IPAD, coarsePointer: true })).toBe(true);
+  });
+
+  it('leaves a real desktop alone', () => {
+    expect(isHandheld({ userAgent: ANDROID_DESKTOP_SITE, coarsePointer: false })).toBe(false);
+    expect(isHandheld({ userAgent: IPAD, coarsePointer: false })).toBe(false);
+  });
 });
 
 describe('pay helpers', () => {

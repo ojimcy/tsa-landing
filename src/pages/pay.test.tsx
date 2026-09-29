@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { PaymentStatusView } from './pay';
 import type { PublicPayment } from '@/lib/pay';
@@ -20,6 +20,34 @@ const link: PublicPayment = {
 
 const render = (payment: PublicPayment, returnHref: string | null = null) =>
   renderToStaticMarkup(<PaymentStatusView payment={payment} returnHref={returnHref} />);
+
+const DESKTOP_UA =
+  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
+
+const onDevice = (userAgent: string, coarsePointer: boolean) => {
+  vi.stubGlobal('navigator', { userAgent });
+  vi.stubGlobal('matchMedia', () => ({ matches: coarsePointer }));
+};
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
+describe('opening the app from an open payment', () => {
+  it('gives a phone in "Desktop site" mode the button, not a QR code to scan', () => {
+    onDevice(DESKTOP_UA, true);
+    const html = render(link);
+    expect(html).toContain('Open TSA Connect');
+    expect(html).not.toContain('Scan with your phone camera');
+  });
+
+  it('gives a desktop the QR code, and still a way to open the app', () => {
+    onDevice(DESKTOP_UA, false);
+    const html = render(link);
+    expect(html).toContain('Scan with your phone camera');
+    expect(html).toContain('Already on your phone? Open TSA Connect');
+  });
+});
 
 describe('PaymentStatusView', () => {
   it('shows what the link is for, who it is for, and until when it is open', () => {
