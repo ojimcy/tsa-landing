@@ -43,3 +43,6 @@ coverage
 .parcel-cache
 .eslintcache
 .turbo
+
+# Local Netlify folder
+.netlify
