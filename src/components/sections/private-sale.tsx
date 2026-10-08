@@ -5,30 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Reveal } from "@/components/reveal";
 import { privateSale } from "@/data/content";
 import { API_URL } from "@/lib/api";
+import { useCopy } from "@/hooks/use-copy";
 
 export function PrivateSale() {
-  const [copied, setCopied] = useState(false);
+  const { status: copyStatus, copy } = useCopy({ legacyFallback: true });
+  const copied = copyStatus === "copied";
   const [form, setForm] = useState({ name: "", email: "", amount: "", txHash: "" });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  const copyAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(privateSale.depositAddress);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const el = document.createElement("textarea");
-      el.value = privateSale.depositAddress;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -201,7 +186,7 @@ export function PrivateSale() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={copyAddress}
+                  onClick={() => copy(privateSale.depositAddress)}
                   className="shrink-0"
                   aria-label="Copy address"
                 >

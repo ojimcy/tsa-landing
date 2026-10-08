@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useCopy } from "@/hooks/use-copy";
 
 /** Prints the page; the browser's print dialog also saves it as a PDF. Never printed itself. */
 export function PrintButton({ label }: { label: string }) {
@@ -15,29 +15,14 @@ export function PrintButton({ label }: { label: string }) {
  * to pay it in the app with it.
  */
 export function PayCodeLine({ code, payable }: { code: string; payable: boolean }) {
-  // An object, so a repeat click is a new state: it re-announces and restarts the reset timer.
-  const [feedback, setFeedback] = useState<{ result: "copied" | "failed" } | null>(null);
-  const status = feedback?.result ?? null;
-  useEffect(() => {
-    if (!feedback) return;
-    const t = setTimeout(() => setFeedback(null), 2000);
-    return () => clearTimeout(t);
-  }, [feedback]);
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(code);
-      setFeedback({ result: "copied" });
-    } catch {
-      setFeedback({ result: "failed" });
-    }
-  };
+  const { status, copy } = useCopy();
 
   return (
     <div className="mt-4 rounded-xl border border-slate-200 px-4 py-3">
       <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Payment code</p>
       <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
         <span className="font-mono text-lg font-semibold tracking-wider text-slate-900">{code}</span>
-        <Button variant="ghost" size="sm" className="print:hidden" aria-label="Copy payment code" onClick={copy}>
+        <Button variant="ghost" size="sm" className="print:hidden" aria-label="Copy payment code" onClick={() => copy(code)}>
           {status === "copied" ? "Copied" : "Copy"}
         </Button>
       </div>
