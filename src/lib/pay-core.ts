@@ -129,8 +129,12 @@ export type PublicReceipt = {
 };
 
 const PAY_CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-// Go's unicode.IsSpace, spelled out: JS \s also takes U+FEFF, which the API refuses.
-const PAY_CODE_IGNORED = /[\t\n\v\f\r \u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]|\p{Pd}/gu;
+// The API's payCodeIgnored list (and the app's), spelled out code point by code
+// point — never \p{Pd}, whose contents move with the browser's Unicode version.
+// Whitespace is Go's unicode.IsSpace set (JS \s also takes U+FEFF, which the API
+// refuses); dashes are Unicode 15's Pd.
+const PAY_CODE_IGNORED =
+  /[\t\n\v\f\r \u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000\-\u058a\u05be\u1400\u1806\u2010-\u2015\u2e17\u2e1a\u2e3a\u2e3b\u2e40\u2e5d\u301c\u3030\u30a0\ufe31\ufe32\ufe58\ufe63\uff0d\u{10ead}]/gu;
 
 /**
  * A payment code as the bare ten characters the API stores, or null when it
