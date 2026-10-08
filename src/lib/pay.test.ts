@@ -11,6 +11,7 @@ import {
   isOpenLinkClosedError,
   isUuid,
   ownOpenLinkUrl,
+  ownReceiptUrl,
   parseNairaToKobo,
   paymentPurpose,
   pollDelayMs,
@@ -265,5 +266,17 @@ describe('open link helpers', () => {
     const outage = await fetchPublicOpenLink(SLUG).catch((e) => e);
     expect(isOpenLinkClosedError(outage)).toBe(false);
     expect(outage.message).toBe('Unable to load this payment link. Please try again.');
+  });
+});
+
+describe('ownReceiptUrl', () => {
+  it('accepts only /r/<code> on our own host', () => {
+    const ok = 'https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD';
+    expect(ownReceiptUrl(ok)).toBe(ok);
+    expect(ownReceiptUrl('https://evil.example/r/TSA-7K2QF-M9XWD')).toBeNull();
+    expect(ownReceiptUrl('https://tsaconnectworld.com/pay/x')).toBeNull();
+    expect(ownReceiptUrl('https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD/x')).toBeNull();
+    expect(ownReceiptUrl('http://tsaconnectworld.com/r/TSA-7K2QF-M9XWD')).toBeNull();
+    expect(ownReceiptUrl(undefined)).toBeNull();
   });
 });

@@ -27,7 +27,7 @@ export function ReceiptSeal({ className }: { className?: string }) {
 export function ReceiptProof({ verifyUrl }: { verifyUrl: string }) {
   return (
     <div className="mt-6 flex flex-col items-center gap-3">
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-4">
         <div className="rounded-xl border border-slate-200 bg-white p-3">
           <QRCodeSVG value={verifyUrl} size={120} />
         </div>

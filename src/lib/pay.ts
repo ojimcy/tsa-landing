@@ -52,6 +52,17 @@ export function ownOpenLinkUrl(s: string | undefined): string | null {
 }
 
 /**
+ * A receipt's verify URL from the API, only if it really is /r/TSA-XXXXX-XXXXX on
+ * our own host: the QR and seal on a receipt vouch for the page it opens.
+ */
+export function ownReceiptUrl(s: string | undefined): string | null {
+  const url = s ? parseHttpsUrl(s) : null;
+  if (!url || !/^\/r\/TSA-[0-9A-Z]{5}-[0-9A-Z]{5}$/.test(url.pathname)) return null;
+  const ownHost = url.origin === window.location.origin || CHECKOUT_HOSTS.has(url.host);
+  return ownHost ? url.toString() : null;
+}
+
+/**
  * The headline and next step shown for a payment that can no longer be paid.
  * restartHref is set when the payer can simply start again: a payment made
  * through a reusable link that timed out or failed while the link is still open.

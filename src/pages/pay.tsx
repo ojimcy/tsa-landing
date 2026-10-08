@@ -13,7 +13,7 @@ import {
   formatLagosDateTime,
   isHandheld,
   isUuid,
-  parseHttpsUrl,
+  ownReceiptUrl,
   paymentPurpose,
   pollDelayMs,
   shouldPollAgain,
@@ -22,10 +22,6 @@ import {
 } from "@/lib/pay";
 
 const INVALID_LINK = "This payment link isn't valid.";
-
-/** The verify page a live receipt's QR opens: https only (it comes from the API, never the URL). */
-const receiptVerifyUrl = (payment: PublicPayment): string | null =>
-  payment.receiptUrl && parseHttpsUrl(payment.receiptUrl) ? payment.receiptUrl : null;
 
 const isMobile = () =>
   isHandheld({
@@ -164,6 +160,7 @@ function PaymentSummary({
   payment: PublicPayment;
   returnHref: string | null;
 }) {
+  const verifyUrl = ownReceiptUrl(payment.receiptUrl);
   const closed = payment.status === "failed" || payment.status === "expired";
   const { paidFor, customerNote } = paymentPurpose(payment);
 
@@ -192,7 +189,7 @@ function PaymentSummary({
           <CheckCircle2 className="mx-auto h-10 w-10 text-green-600" />
           <p className="mt-3 text-base font-semibold text-green-700">Paid</p>
           {payment.payCode && <p className="mt-1 font-mono text-sm text-slate-700">{payment.payCode}</p>}
-          {receiptVerifyUrl(payment) && <ReceiptProof verifyUrl={receiptVerifyUrl(payment)!} />}
+          {verifyUrl && <ReceiptProof verifyUrl={verifyUrl} />}
           <Button asChild size="lg" className="mt-6 h-auto w-full whitespace-normal py-3 wrap-anywhere print:hidden">
             <a href={returnHref}>Return to {payment.merchantName}</a>
           </Button>
@@ -222,6 +219,7 @@ function ClosedPayment({ payment }: { payment: PublicPayment }) {
 
 function PaymentReceipt({ payment }: { payment: PublicPayment }) {
   const paidAt = formatLagosDateTime(payment.succeededAt);
+  const verifyUrl = ownReceiptUrl(payment.receiptUrl);
   const { paidFor, customerNote } = paymentPurpose(payment);
   const rows: [string, string | null | undefined][] = [
     ["Paid to", payment.merchantName],
@@ -249,7 +247,7 @@ function PaymentReceipt({ payment }: { payment: PublicPayment }) {
             </div>
           ))}
       </dl>
-      {receiptVerifyUrl(payment) && <ReceiptProof verifyUrl={receiptVerifyUrl(payment)!} />}
+      {verifyUrl && <ReceiptProof verifyUrl={verifyUrl} />}
       <p className="mt-4 text-xs text-slate-500">Keep this page as your receipt.</p>
     </>
   );

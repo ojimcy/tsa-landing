@@ -235,6 +235,24 @@ describe('payment codes and receipts', () => {
     expect(html).not.toContain('Verified by TSA Connect');
   });
 
+  it('shows no seal or QR for a receipt link that is not our own /r/ page', () => {
+    for (const receiptUrl of [
+      'https://evil.example/r/TSA-7K2QF-M9XWD',
+      'https://tsaconnectworld.com/pay/x',
+      'https://tsaconnectworld.com/r/not-a-code',
+    ]) {
+      const html = render({ ...paidLive, receiptUrl });
+      expect(html).not.toContain('Verified by TSA Connect');
+      expect(html).not.toContain('shape-rendering');
+    }
+  });
+
+  it('a valid receipt URL shows the QR and seal', () => {
+    const html = render(paidLive);
+    expect(html).toContain('Verified by TSA Connect');
+    expect(html).toContain('shape-rendering');
+  });
+
   it('ignores a receipt link that is not https', () => {
     expect(render({ ...paidLive, receiptUrl: 'javascript:alert(1)' })).not.toContain('Verified by TSA Connect');
   });
