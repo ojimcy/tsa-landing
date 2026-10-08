@@ -6,6 +6,8 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
+      // `?raw` CSS imports are empty under vitest unless CSS is processed.
+      css: { include: /index\.css/ },
     },
   }),
 )

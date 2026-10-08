@@ -9,6 +9,8 @@ export type PaymentSource = "api" | "link" | "open";
 
 export type PublicPayment = {
   id: string;
+  /** The payment's code, "TSA-XXXXX-XXXXX": copied or read out, typed in the app (Wallet → TSA Pay), and the receipt's number. */
+  payCode?: string;
   merchantName: string;
   status: PaymentStatus;
   amount: number;
@@ -34,6 +36,8 @@ export type PublicPayment = {
   cancelled?: boolean;
   /** When it was paid — shown on the receipt when the API sends it. */
   succeededAt?: string;
+  /** The public page that verifies this payment's receipt — live payments only, once succeeded. */
+  receiptUrl?: string;
 };
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

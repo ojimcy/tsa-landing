@@ -68,3 +68,13 @@ body {
     animation: none !important;
   }
 }
+
+/* A printed pay page (invoice or receipt): content still waiting to scroll into
+   view would otherwise print blank. */
+@media print {
+  .reveal {
+    opacity: 1 !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

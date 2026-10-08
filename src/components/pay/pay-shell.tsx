@@ -7,31 +7,36 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { appStoreUrl, site } from "@/data/content";
 
-/** The page frame shared by the TSA Pay checkout (/pay/:id) and reusable link (/pay/l/:slug) pages. */
-export function PayShell({ children }: { children: ReactNode }) {
+/** The page frame shared by the TSA Pay checkout (/pay/:id), reusable link (/pay/l/:slug) and receipt (/r/:code) pages. */
+export function PayShell({ children, title = "Pay" }: { children: ReactNode; title?: string }) {
   useEffect(() => {
-    window.document.title = `Pay · ${site.name}`;
-  }, []);
+    window.document.title = `${title} · ${site.name}`;
+  }, [title]);
 
   return (
     <div className="flex min-h-screen flex-col">
       {/* These pages are reached from shared links and QR codes — never send
-          the payment id, link slug or query string on to third-party
+          the payment id, link slug, code or query string on to third-party
           resources they embed. */}
       <meta name="referrer" content="no-referrer" />
-      <Header />
+      {/* Printed, a pay page is its card alone: an invoice or a receipt. */}
+      <div className="print:hidden">
+        <Header />
+      </div>
       <main className="flex-1">
-        <section className="bg-gradient-to-b from-white via-amber-50/40 to-white">
-          <div className="mx-auto max-w-lg px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <section className="bg-gradient-to-b from-white via-amber-50/40 to-white print:bg-none">
+          <div className="mx-auto max-w-lg px-4 py-16 sm:px-6 sm:py-20 lg:px-8 print:py-0">
             <Reveal>
-              <Card className="border-brand/10 shadow-sm">
+              <Card className="border-brand/10 shadow-sm print:border-0 print:shadow-none">
                 <CardContent className="p-8 text-center">{children}</CardContent>
               </Card>
             </Reveal>
           </div>
         </section>
       </main>
-      <Footer />
+      <div className="print:hidden">
+        <Footer />
+      </div>
     </div>
   );
 }
@@ -76,7 +81,7 @@ export function GetTheApp() {
   ];
 
   return (
-    <div className="mt-6 border-t border-slate-100 pt-5">
+    <div className="mt-6 border-t border-slate-100 pt-5 print:hidden">
       <p className="text-sm text-slate-500">
         Don&apos;t have TSA Connect? Get the app, sign up, then come back to this link.
       </p>
