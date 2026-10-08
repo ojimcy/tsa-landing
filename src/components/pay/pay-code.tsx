@@ -15,18 +15,20 @@ export function PrintButton({ label }: { label: string }) {
  * to pay it in the app with it.
  */
 export function PayCodeLine({ code, payable }: { code: string; payable: boolean }) {
-  const [status, setStatus] = useState<"copied" | "failed" | null>(null);
+  // An object, so a repeat click is a new state: it re-announces and restarts the reset timer.
+  const [feedback, setFeedback] = useState<{ result: "copied" | "failed" } | null>(null);
+  const status = feedback?.result ?? null;
   useEffect(() => {
-    if (!status) return;
-    const t = setTimeout(() => setStatus(null), 2000);
+    if (!feedback) return;
+    const t = setTimeout(() => setFeedback(null), 2000);
     return () => clearTimeout(t);
-  }, [status]);
+  }, [feedback]);
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(code);
-      setStatus("copied");
+      setFeedback({ result: "copied" });
     } catch {
-      setStatus("failed");
+      setFeedback({ result: "failed" });
     }
   };
 

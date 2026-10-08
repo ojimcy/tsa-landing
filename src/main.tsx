@@ -8,6 +8,7 @@ import TermsPage from './pages/terms';
 import DeleteAccountPage from './pages/delete-account';
 import PayPage from './pages/pay';
 import PayOpenLinkPage from './pages/pay-open-link';
+import ReceiptPage from './pages/receipt';
 import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
 
@@ -28,6 +29,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/pay/:id" element={<PayPage />} />
         {/* TSA Pay reusable link (e.g. a shop's printed QR) — the payer types the amount. */}
         <Route path="/pay/l/:slug" element={<PayOpenLinkPage />} />
+        {/* A TSA Pay receipt's public verify page — the QR on every live receipt opens it. */}
+        <Route path="/r/:code" element={<ReceiptPage />} />
         <Route path="/developers/tsa-pay" element={<DevelopersTsaPayPage />} />
       </Routes>
     </BrowserRouter>
