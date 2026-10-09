@@ -16,7 +16,8 @@ export type PublicPayment = {
   amount: number;
   customerTotal: number;
   currency: string;
-  expiresAt: string;
+  /** null when the payment never expires (its merchant set no expiry). */
+  expiresAt: string | null;
   returnUrl?: string;
   appUrl: string;
   mode?: PaymentMode;
@@ -102,7 +103,7 @@ const LAGOS_DATE_TIME = new Intl.DateTimeFormat("en-NG", {
 });
 
 /** Formats an ISO timestamp in Lagos time, e.g. "3 Oct 2026, 14:30 WAT"; null if unparseable. */
-export function formatLagosDateTime(iso: string | undefined): string | null {
+export function formatLagosDateTime(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return null;
