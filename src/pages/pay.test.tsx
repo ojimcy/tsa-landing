@@ -184,3 +184,79 @@ describe('PaymentStatusView', () => {
     expect(foreign).toContain('Ask the store for a new payment link.');
   });
 });
+
+describe('payment codes and receipts', () => {
+  const coded: PublicPayment = { ...link, payCode: 'TSA-7K2QF-M9XWD' };
+  const paidLive: PublicPayment = {
+    ...coded,
+    mode: 'live',
+    status: 'succeeded',
+    succeededAt: '2026-09-28T09:05:00Z',
+    receiptUrl: 'https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD',
+  };
+
+  it('a pending payment shows its code, how to pay with it in the app, and Print', () => {
+    onDevice(DESKTOP_UA, false);
+    const html = render(coded);
+    expect(html).toContain('TSA-7K2QF-M9XWD');
+    expect(html).toContain('Or pay in the TSA Connect app: tap Pay on the home screen and enter this code');
+    expect(html).toMatch(/<button[^>]*>Copy<\/button>/);
+    expect(html).toMatch(/<button[^>]*>Print<\/button>/);
+  });
+
+  it('a processing payment shows its code but no longer how to pay with it', () => {
+    onDevice(DESKTOP_UA, false);
+    const html = render({ ...coded, status: 'processing' });
+    expect(html).toContain('TSA-7K2QF-M9XWD');
+    expect(html).not.toContain('tap Pay on the home screen');
+    expect(html).not.toMatch(/>Print</);
+  });
+
+  // Review Focus 4.
+  it('a payment from before codes shows no code line', () => {
+    onDevice(DESKTOP_UA, false);
+    const html = render(link);
+    expect(html).not.toContain('Payment code');
+    expect(html).not.toContain('tap Pay on the home screen');
+  });
+
+  it('a live receipt carries the code, a QR to its verify page, the seal and Print — with or without a return URL', () => {
+    for (const html of [render(paidLive), render(paidLive, 'https://adabakes.ng/done')]) {
+      expect(html).toContain('TSA-7K2QF-M9XWD');
+      expect(html).toContain('Verified by TSA Connect');
+      expect(html).toContain('Print / Save as PDF');
+      // The receipt's share image, served by the same site (netlify/edge-functions/receipt-og.ts).
+      expect(html).toMatch(/<a[^>]*href="\/og\/r\/TSA-7K2QF-M9XWD\.png"[^>]*download/);
+      expect(html).toContain('Save receipt image');
+    }
+    expect(render(paidLive, 'https://adabakes.ng/done')).toContain('Return to Ada Bakes');
+  });
+
+  it('a test receipt never carries the seal', () => {
+    const html = render({ ...paidLive, mode: 'test', receiptUrl: undefined });
+    expect(html).toContain('TSA-7K2QF-M9XWD');
+    expect(html).not.toContain('Verified by TSA Connect');
+  });
+
+  it('shows no seal or QR for a receipt link that is not our own /r/ page', () => {
+    for (const receiptUrl of [
+      'https://evil.example/r/TSA-7K2QF-M9XWD',
+      'https://tsaconnectworld.com/pay/x',
+      'https://tsaconnectworld.com/r/not-a-code',
+    ]) {
+      const html = render({ ...paidLive, receiptUrl });
+      expect(html).not.toContain('Verified by TSA Connect');
+      expect(html).not.toContain('shape-rendering');
+    }
+  });
+
+  it('a valid receipt URL shows the QR and seal', () => {
+    const html = render(paidLive);
+    expect(html).toContain('Verified by TSA Connect');
+    expect(html).toContain('shape-rendering');
+  });
+
+  it('ignores a receipt link that is not https', () => {
+    expect(render({ ...paidLive, receiptUrl: 'javascript:alert(1)' })).not.toContain('Verified by TSA Connect');
+  });
+});

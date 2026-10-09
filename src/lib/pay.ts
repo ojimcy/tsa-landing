@@ -1,6 +1,6 @@
 import { API_URL } from "@/lib/api";
 import { site } from "@/data/content";
-import { formatKobo, type PaymentStatus, type PublicOpenLink, type PublicPayment } from "@/lib/pay-core";
+import { formatKobo, type PaymentStatus, type PublicOpenLink, type PublicPayment, type PublicReceipt } from "@/lib/pay-core";
 
 export * from "@/lib/pay-core";
 
@@ -39,17 +39,33 @@ export function isHandheld(device: { userAgent: string; coarsePointer: boolean }
 
 const CHECKOUT_HOSTS: ReadonlySet<string> = new Set([site.domain, `www.${site.domain}`]);
 
+/** An https URL on our own host (this page's origin, or the production domain) whose path passes `pathOk`. */
+function ownUrl(s: string | undefined, pathOk: (pathname: string) => boolean): string | null {
+  const url = s ? parseHttpsUrl(s) : null;
+  if (!url || !pathOk(url.pathname)) return null;
+  const ownHost = url.origin === window.location.origin || CHECKOUT_HOSTS.has(url.host);
+  return ownHost ? url.toString() : null;
+}
+
 /**
  * The reusable link to start again from, or null unless it is an https
  * /pay/l/ page on our own checkout host (this page's origin, or the
  * production domain) — the payer is sent there without a second look.
  */
 export function ownOpenLinkUrl(s: string | undefined): string | null {
-  const url = s ? parseHttpsUrl(s) : null;
-  if (!url || !url.pathname.startsWith("/pay/l/")) return null;
-  const ownHost = url.origin === window.location.origin || CHECKOUT_HOSTS.has(url.host);
-  return ownHost ? url.toString() : null;
+  return ownUrl(s, (path) => path.startsWith("/pay/l/"));
 }
+
+/**
+ * A receipt's verify URL from the API, only if it really is /r/TSA-XXXXX-XXXXX on
+ * our own host: the QR and seal on a receipt vouch for the page it opens.
+ */
+export function ownReceiptUrl(s: string | undefined): string | null {
+  return ownUrl(s, (path) => /^\/r\/TSA-[0-9A-Z]{5}-[0-9A-Z]{5}$/.test(path));
+}
+
+/** The public page a receipt's QR opens, on the site's canonical domain (never the origin it was viewed from). */
+export { receiptPageUrl as receiptVerifyUrl } from "@/lib/receipt-share";
 
 /**
  * The headline and next step shown for a payment that can no longer be paid.
@@ -130,6 +146,13 @@ async function requestPayApi<T>(path: string, init: RequestInit, genericError: s
  */
 export function fetchPublicPayment(id: string): Promise<PublicPayment> {
   return requestPayApi(`/pay/public/${encodeURIComponent(id)}`, {}, GENERIC_FETCH_ERROR);
+}
+
+export const RECEIPT_LOAD_ERROR = "Unable to load this receipt. Please try again.";
+
+/** A succeeded live payment's public receipt, by its bare code. Plain GET, no headers — preflight-free. */
+export function fetchPublicReceipt(code: string): Promise<PublicReceipt> {
+  return requestPayApi(`/pay/public/receipt/${encodeURIComponent(code)}`, {}, RECEIPT_LOAD_ERROR);
 }
 
 /** True when the API says there is no such link, or it has stopped taking payments. */

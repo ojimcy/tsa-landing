@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PayCodeLine, PrintButton } from "@/components/pay/pay-code";
+import { ReceiptProof } from "@/components/pay/receipt-proof";
 import { GetTheApp, PayLoading, PayNotice, PayShell, TestModeBanner } from "@/components/pay/pay-shell";
 import {
   closedPaymentCopy,
@@ -11,6 +13,7 @@ import {
   formatLagosDateTime,
   isHandheld,
   isUuid,
+  ownReceiptUrl,
   paymentPurpose,
   pollDelayMs,
   shouldPollAgain,
@@ -157,6 +160,7 @@ function PaymentSummary({
   payment: PublicPayment;
   returnHref: string | null;
 }) {
+  const verifyUrl = ownReceiptUrl(payment.receiptUrl);
   const closed = payment.status === "failed" || payment.status === "expired";
   const { paidFor, customerNote } = paymentPurpose(payment);
 
@@ -184,7 +188,9 @@ function PaymentSummary({
         <div className="mt-6">
           <CheckCircle2 className="mx-auto h-10 w-10 text-green-600" />
           <p className="mt-3 text-base font-semibold text-green-700">Paid</p>
-          <Button asChild size="lg" className="mt-6 h-auto w-full whitespace-normal py-3 wrap-anywhere">
+          {payment.payCode && <p className="mt-1 font-mono text-sm text-slate-700">{payment.payCode}</p>}
+          {verifyUrl && <ReceiptProof verifyUrl={verifyUrl} />}
+          <Button asChild size="lg" className="mt-6 h-auto w-full whitespace-normal py-3 wrap-anywhere print:hidden">
             <a href={returnHref}>Return to {payment.merchantName}</a>
           </Button>
         </div>
@@ -213,6 +219,7 @@ function ClosedPayment({ payment }: { payment: PublicPayment }) {
 
 function PaymentReceipt({ payment }: { payment: PublicPayment }) {
   const paidAt = formatLagosDateTime(payment.succeededAt);
+  const verifyUrl = ownReceiptUrl(payment.receiptUrl);
   const { paidFor, customerNote } = paymentPurpose(payment);
   const rows: [string, string | null | undefined][] = [
     ["Paid to", payment.merchantName],
@@ -220,6 +227,7 @@ function PaymentReceipt({ payment }: { payment: PublicPayment }) {
     ["Note from customer", customerNote],
     ["Requested for", payment.customerName],
     ["Paid on", paidAt],
+    ["Payment code", payment.payCode],
   ];
 
   return (
@@ -239,6 +247,7 @@ function PaymentReceipt({ payment }: { payment: PublicPayment }) {
             </div>
           ))}
       </dl>
+      {verifyUrl && <ReceiptProof verifyUrl={verifyUrl} />}
       <p className="mt-4 text-xs text-slate-500">Keep this page as your receipt.</p>
     </>
   );
@@ -263,6 +272,8 @@ function PendingPayment({ payment }: { payment: PublicPayment }) {
         </p>
       )}
 
+      {payment.payCode && <PayCodeLine code={payment.payCode} payable={payment.status === "pending"} />}
+
       {mobile ? (
         <div className="mt-4">
           <Button size="lg" className="w-full" onClick={openApp}>
@@ -281,6 +292,13 @@ function PendingPayment({ payment }: { payment: PublicPayment }) {
           <Button variant="link" size="sm" onClick={openApp}>
             Already on your phone? Open TSA Connect
           </Button>
+        </div>
+      )}
+
+      {/* The v1 printable invoice: merchant, amount, purpose and code, as shown above. */}
+      {payment.status === "pending" && (
+        <div className="mt-4">
+          <PrintButton label="Print" />
         </div>
       )}
 

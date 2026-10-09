@@ -11,6 +11,10 @@ import {
   isOpenLinkClosedError,
   isUuid,
   ownOpenLinkUrl,
+  ownReceiptUrl,
+  normalizePayCode,
+  receiptRefundLine,
+  fetchPublicReceipt,
   parseNairaToKobo,
   paymentPurpose,
   pollDelayMs,
@@ -265,5 +269,60 @@ describe('open link helpers', () => {
     const outage = await fetchPublicOpenLink(SLUG).catch((e) => e);
     expect(isOpenLinkClosedError(outage)).toBe(false);
     expect(outage.message).toBe('Unable to load this payment link. Please try again.');
+  });
+});
+
+describe('ownReceiptUrl', () => {
+  it('accepts only /r/<code> on our own host', () => {
+    const ok = 'https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD';
+    expect(ownReceiptUrl(ok)).toBe(ok);
+    expect(ownReceiptUrl('https://evil.example/r/TSA-7K2QF-M9XWD')).toBeNull();
+    expect(ownReceiptUrl('https://tsaconnectworld.com/pay/x')).toBeNull();
+    expect(ownReceiptUrl('https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD/x')).toBeNull();
+    expect(ownReceiptUrl('http://tsaconnectworld.com/r/TSA-7K2QF-M9XWD')).toBeNull();
+    expect(ownReceiptUrl(undefined)).toBeNull();
+  });
+});
+
+describe('payment codes (mirrors the API)', () => {
+  it.each([
+    ['TSA-7K2QF-M9XWD', '7K2QFM9XWD'],
+    ['tsa-7k2qf-m9xwd', '7K2QFM9XWD'],
+    ['7K2QF M9XWD', '7K2QFM9XWD'],
+    ['7k2qfm9xwd', '7K2QFM9XWD'],
+    ['TSA 7K2QF M9XWD\n', '7K2QFM9XWD'],
+    ['\u00a0TSA\u20137K2QF\u2014M9XWD', '7K2QFM9XWD'],
+    ['TSA-7K2QF-M9XWO', '7K2QFM9XW0'],
+    ['TSA-7K2QF-M9XIL', '7K2QFM9X11'],
+    ['TSA12345XY', 'TSA12345XY'],
+    ['TSA-TSA12-345XY', 'TSA12345XY'],
+    ['TSA\u30007K2QF\u{10EAD}M9XWD', '7K2QFM9XWD'], // ideographic space, astral Yezidi hyphen: on the explicit lists
+  ])('%j is %s', (input, want) => {
+    expect(normalizePayCode(input)).toBe(want);
+  });
+
+  it.each([
+    '', 'TSA', 'hello', '7K2QF-M9XW', '7K2QF-M9XWDD', 'TSA-7K2QF-M9XWU', '7K2QF-M9XW!',
+    'TSA-7K2QF-M9XWD-1', 'A'.repeat(100),
+    'TSA-7K2QF-M9XW\u0131', 'TSA-7K2QF-M9XW\u017f', 'TSA-7K2QF-M9XW\u00df', '7K2QFM9X\u00df',
+    // The Garay hyphen (Unicode 16 Pd) is on no list — the dash set must not follow the browser's Unicode; BOM is no space.
+    '7K2QF\u{10D6E}M9XWD', '7K2QF\ufeffM9XWD',
+  ])('%j is not a code', (input) => {
+    expect(normalizePayCode(input)).toBeNull();
+  });
+
+  it('says how much of a payment was refunded', () => {
+    expect(receiptRefundLine({ refundStatus: 'none', refundedAmount: '0.00' })).toBeNull();
+    expect(receiptRefundLine({ refundStatus: 'partial', refundedAmount: '12.50' })).toBe('Partly refunded · 12.50 USD');
+    expect(receiptRefundLine({ refundStatus: 'full', refundedAmount: '15.00' })).toBe('Refunded in full · 15.00 USD');
+  });
+
+  it('fetches a receipt by its bare code without custom headers', async () => {
+    const f = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ success: true, data: {} }) }));
+    vi.stubGlobal('fetch', f);
+    await fetchPublicReceipt('7K2QFM9XWD');
+    const [url, init] = f.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toMatch(/\/pay\/public\/receipt\/7K2QFM9XWD$/);
+    expect(init.headers).toBeUndefined();
   });
 });

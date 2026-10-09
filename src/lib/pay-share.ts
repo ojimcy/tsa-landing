@@ -27,6 +27,9 @@ export type ShareMeta = {
   description: string;
   url: string;
   image: string;
+  /** The image's size; a pay card's 1200×630 when left out. */
+  imageWidth?: number;
+  imageHeight?: number;
 };
 
 type PayPage = { kind: "payment"; id: string } | { kind: "open"; slug: string };
@@ -40,7 +43,7 @@ export function parsePayPath(pathname: string): PayPage | null {
 }
 
 /** Shortened to `max` characters, counting an emoji as one so none is cut in half. */
-function clip(s: string | undefined, max: number): string | undefined {
+export function clip(s: string | undefined, max: number): string | undefined {
   const chars = Array.from(s ?? "");
   return chars.length > max ? `${chars.slice(0, max - 1).join("").trimEnd()}…` : s || undefined;
 }
@@ -104,7 +107,7 @@ function words(card: PayCard, openUntil: string | null): { title: string; descri
  * A short hash of the card, put on the image URL: chat apps cache a preview
  * image by URL, so a link that gets paid or expires needs a new one.
  */
-export function cardVersion(card: PayCard): string {
+export function cardVersion(card: object): string {
   let h = 0x811c9dc5;
   for (const ch of JSON.stringify(card)) h = Math.imul(h ^ ch.charCodeAt(0), 0x01000193);
   return (h >>> 0).toString(36);
@@ -170,8 +173,8 @@ export function metaTags(meta: ShareMeta): string {
     `<meta property="og:description" content="${e(meta.description)}" />`,
     `<meta property="og:image" content="${e(meta.image)}" />`,
     `<meta property="og:image:type" content="image/png" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
+    `<meta property="og:image:width" content="${meta.imageWidth ?? 1200}" />`,
+    `<meta property="og:image:height" content="${meta.imageHeight ?? 630}" />`,
     `<meta property="og:image:alt" content="${e(meta.title)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${e(meta.title)}" />`,
@@ -183,7 +186,8 @@ export function metaTags(meta: ShareMeta): string {
 // Crawlers give up after a few seconds; the generic card is better than none.
 const TIMEOUT_MS = 1500;
 
-async function getPublic<T>(apiUrl: string, path: string): Promise<T | null> {
+/** A public API read for a crawler: its data, or null for anything unreadable or slow. */
+export async function getPublic<T>(apiUrl: string, path: string): Promise<T | null> {
   try {
     const res = await fetch(`${apiUrl}${path}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
     if (!res.ok) return null;
