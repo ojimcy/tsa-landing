@@ -1,6 +1,6 @@
 import { API_URL } from "@/lib/api";
 import { site } from "@/data/content";
-import { formatKobo, formatPayCode, type PaymentStatus, type PublicOpenLink, type PublicPayment, type PublicReceipt } from "@/lib/pay-core";
+import { formatKobo, type PaymentStatus, type PublicOpenLink, type PublicPayment, type PublicReceipt } from "@/lib/pay-core";
 
 export * from "@/lib/pay-core";
 
@@ -65,9 +65,7 @@ export function ownReceiptUrl(s: string | undefined): string | null {
 }
 
 /** The public page a receipt's QR opens, on the site's canonical domain (never the origin it was viewed from). */
-export function receiptVerifyUrl(bareCode: string): string {
-  return `https://${site.domain}/r/${formatPayCode(bareCode)}`;
-}
+export { receiptPageUrl as receiptVerifyUrl } from "@/lib/receipt-share";
 
 /**
  * The headline and next step shown for a payment that can no longer be paid.

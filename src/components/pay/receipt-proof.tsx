@@ -1,29 +1,24 @@
 import { useId } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { PrintButton } from "@/components/pay/pay-code";
+import { Button } from "@/components/ui/button";
+import { receiptSealSvg } from "@/lib/receipt-seal";
 
 /**
- * The brand seal on a live receipt (spec D13): the QR beside it, and the page it
- * opens, are the proof — this only says where to check. No legal wording.
+ * The brand seal on a live receipt (spec D13), drawn from the same SVG as the
+ * receipt's share image (lib/receipt-seal.ts). The markup is ours alone — an id
+ * and fixed shapes, nothing from the API.
  */
 export function ReceiptSeal({ className }: { className?: string }) {
-  const ring = `${useId()}-ring`;
-  return (
-    <svg viewBox="0 0 120 120" role="img" aria-label="Verified by TSA Connect · scan to verify" className={className}>
-      <defs>
-        <path id={ring} d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
-      </defs>
-      <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" strokeWidth="3" />
-      <circle cx="60" cy="60" r="33" fill="none" stroke="currentColor" strokeWidth="1.5" />
-      <text fontSize="10" fontWeight="700" letterSpacing="1.1" fill="currentColor">
-        <textPath href={`#${ring}`}>VERIFIED BY TSA CONNECT · SCAN TO VERIFY ·</textPath>
-      </text>
-      <path d="M45 61 l10 10 l20 -22" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return <span className={`inline-block ${className ?? ""}`} dangerouslySetInnerHTML={{ __html: receiptSealSvg({ ringId: `${useId()}-ring` }) }} />;
 }
 
-/** A live receipt's proof: the QR that opens its public verify page, the seal, and Print / Save as PDF. */
+/** The receipt's share image on this site (netlify/edge-functions/receipt-og.ts): /r/TSA-… → /og/r/TSA-….png. */
+function receiptImagePath(verifyUrl: string): string {
+  return `/og${new URL(verifyUrl).pathname}.png`;
+}
+
+/** A live receipt's proof: the QR that opens its public verify page, the seal, Print / Save as PDF and the share image. */
 export function ReceiptProof({ verifyUrl }: { verifyUrl: string }) {
   return (
     <div className="mt-6 flex flex-col items-center gap-3">
@@ -34,7 +29,14 @@ export function ReceiptProof({ verifyUrl }: { verifyUrl: string }) {
         <ReceiptSeal className="h-24 w-24 text-brand" />
       </div>
       <p className="text-xs text-slate-500">Verified by TSA Connect · scan the code to check this receipt</p>
-      <PrintButton label="Print / Save as PDF" />
+      <div className="flex flex-wrap justify-center gap-2 print:hidden">
+        <PrintButton label="Print / Save as PDF" />
+        <Button asChild variant="outline" size="sm">
+          <a href={receiptImagePath(verifyUrl)} download>
+            Save receipt image
+          </a>
+        </Button>
+      </div>
     </div>
   );
 }

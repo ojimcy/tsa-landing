@@ -2,7 +2,7 @@
 // place of the site-wide meta in index.html — chat apps read only the HTML.
 import type { Config, Context } from "@netlify/edge-functions";
 import { injectShareMeta, isLinkPreviewBot, loadPayCard, metaTags, shareMeta } from "../../src/lib/pay-share.ts";
-import { payApiUrl } from "./lib/pay-api.ts";
+import { payApiUrl } from "../lib/pay-api.ts";
 
 // Headers of the static index.html that no longer describe the rewritten page.
 const STALE_HEADERS = ["content-length", "content-encoding", "etag", "last-modified"];

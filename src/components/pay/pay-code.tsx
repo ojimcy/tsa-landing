@@ -30,7 +30,7 @@ export function PayCodeLine({ code, payable }: { code: string; payable: boolean 
         {status === "copied" ? "Copied" : status === "failed" ? "Couldn't copy" : ""}
       </p>
       {payable && (
-        <p className="mt-1 text-xs text-slate-500">Or pay in the TSA Connect app: Wallet → TSA Pay → enter this code</p>
+        <p className="mt-1 text-xs text-slate-500">Or pay in the TSA Connect app: tap Pay on the home screen and enter this code</p>
       )}
     </div>
   );

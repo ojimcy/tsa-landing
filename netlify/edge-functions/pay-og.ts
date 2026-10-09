@@ -2,11 +2,10 @@
 // /og/pay/l/:slug.png. It is drawn from the API, never from the URL, so nobody
 // can make a TSA-branded "pay ₦X to Y" card for a link that doesn't exist.
 import type { Config } from "@netlify/edge-functions";
-import type { CSSProperties, ReactElement, ReactNode } from "react";
-import satori from "satori";
-import { initWasm, Resvg } from "@resvg/resvg-wasm";
+import type { ReactElement } from "react";
 import { GENERIC_CARD, loadPayCard, ogImageUrl, parsePayPath, type PayCard } from "../../src/lib/pay-share.ts";
-import { payApiUrl } from "./lib/pay-api.ts";
+import { h, img, pngResponse, renderPng } from "../lib/og-render.ts";
+import { payApiUrl } from "../lib/pay-api.ts";
 
 const WIDTH = 1200;
 const HEIGHT = 630;
@@ -14,44 +13,6 @@ const INK = "#1a2425";
 const GOLD = "#E8A14A";
 const MUTED = "#9fb1b2";
 const SOFT = "#d5dcdc";
-
-type Assets = { medium: ArrayBuffer; bold: ArrayBuffer; logo: string };
-
-/** `load` run once per instance; a failure is retried by the next call rather than kept. */
-function once<T>(load: (origin: string) => Promise<T>): (origin: string) => Promise<T> {
-  let pending: Promise<T> | undefined;
-  return (origin) => {
-    if (pending) return pending;
-    const p = load(origin);
-    p.catch(() => {
-      if (pending === p) pending = undefined;
-    });
-    return (pending = p);
-  };
-}
-
-// Fonts, logo and the resvg wasm are the site's own static files (the wasm is
-// copied from node_modules at build). The wasm can be initialised only once,
-// so it has its own loader.
-const get = (origin: string, path: string) =>
-  fetch(`${origin}${path}`).then((r) => {
-    if (!r.ok) throw new Error(`${path}: ${r.status}`);
-    return r.arrayBuffer();
-  });
-
-const loadWasm = once((origin) => get(origin, "/og-assets/resvg.wasm").then((wasm) => initWasm(wasm)));
-
-const loadAssets = once(async (origin): Promise<Assets> => {
-  const [medium, bold, png] = await Promise.all(["/og-assets/Inter-Medium.ttf", "/og-assets/Inter-Bold.ttf", "/icon-512.png"].map((p) => get(origin, p)));
-  let binary = "";
-  for (const byte of new Uint8Array(png)) binary += String.fromCharCode(byte);
-  return { medium, bold, logo: `data:image/png;base64,${btoa(binary)}` };
-});
-
-/** A satori node: a flex box unless the style says otherwise. */
-function h(type: string, style: CSSProperties, ...children: ReactNode[]): ReactElement {
-  return { type, key: null, props: { style: { display: "flex", ...style }, children } };
-}
 
 const pill = (text: string, color: string) =>
   h("div", { padding: "8px 20px", borderRadius: 999, border: `2px solid ${color}`, color, fontSize: 26, fontWeight: 700, letterSpacing: 2 }, text);
@@ -78,7 +39,7 @@ function cardImage(card: PayCard, logo: string): ReactElement {
       h(
         "div",
         { alignItems: "center" },
-        { type: "img", key: null, props: { src: logo, width: 64, height: 64, style: { borderRadius: 14 } } },
+        img(logo, 64, 64, { borderRadius: 14 }),
         h("div", { marginLeft: 20, fontSize: 34, fontWeight: 700 }, "TSA Pay"),
       ),
       h("div", { gap: 16 }, ...badges.filter(Boolean)),
@@ -105,27 +66,9 @@ export default async function payOg(request: Request) {
   const canonical = ogImageUrl(url.origin, payPath, card);
   if (url.href !== canonical) return new Response(null, { status: 302, headers: { location: canonical, "cache-control": "no-store" } });
 
-  const [{ medium, bold, logo }] = await Promise.all([loadAssets(url.origin), loadWasm(url.origin)]);
-  const svg = await satori(cardImage(card, logo), {
-    width: WIDTH,
-    height: HEIGHT,
-    fonts: [
-      { name: "Inter", data: medium, weight: 500, style: "normal" },
-      { name: "Inter", data: bold, weight: 700, style: "normal" },
-    ],
-  });
-  // Copied into a plain ArrayBuffer-backed array, the only kind Response takes.
-  const png = new Uint8Array(new Resvg(svg).render().asPng());
+  const png = await renderPng(url.origin, WIDTH, HEIGHT, ({ logo }) => cardImage(card, logo));
   // A versioned URL never changes; the generic card is short-lived so a link that appears later gets its own.
-  const maxAge = card === GENERIC_CARD ? 300 : 7 * 86_400;
-  return new Response(png, {
-    headers: {
-      "content-type": "image/png",
-      "cache-control": `public, max-age=${maxAge}`,
-      "netlify-cdn-cache-control": `public, s-maxage=${maxAge}`,
-      "x-robots-tag": "noindex",
-    },
-  });
+  return pngResponse(png, card === GENERIC_CARD ? 300 : 7 * 86_400);
 }
 
 export const config: Config = { path: "/og/pay/*", cache: "manual" };

@@ -9,7 +9,7 @@ export type PaymentSource = "api" | "link" | "open";
 
 export type PublicPayment = {
   id: string;
-  /** The payment's code, "TSA-XXXXX-XXXXX": copied or read out, typed in the app (Wallet → TSA Pay), and the receipt's number. */
+  /** The payment's code, "TSA-XXXXX-XXXXX": copied or read out, typed in the app (Home → Pay), and the receipt's number. */
   payCode?: string;
   merchantName: string;
   status: PaymentStatus;

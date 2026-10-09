@@ -90,8 +90,24 @@ Chat apps don't run the SPA, so a shared `/pay/*` link gets its preview on the s
 - `netlify/edge-functions/pay-og.ts` — the 1200×630 card at `/og/pay/:id.png` /
   `/og/pay/l/:slug.png`, always drawn from the API, never from the URL. Only the card's current
   `?v=` URL renders (any other `v` is redirected to it), so every render is cacheable.
-- Shared logic: `src/lib/pay-share.ts` (tested), which like `pay-core.ts` may only use relative
-  `.ts` imports because Deno loads it. `tsconfig.edge.json` type-checks `netlify/` in `npm run build`.
+- `netlify/edge-functions/receipt-meta.ts` — the same meta swap for a shared receipt (`/r/:code`).
+  Its image is `netlify/functions/receipt-og.mts`, a **Node function, not an edge function**: the
+  1080×1350 receipt at `/og/r/TSA-XXXXX-XXXXX.png` (also the receipt page's "Save receipt image")
+  takes resvg hundreds of ms of CPU, far past an edge function's ~50 ms budget; the CDN caches each
+  versioned image. Drawn from the API's public receipt, which answers only for a succeeded LIVE
+  payment — any other code is a 404 (CDN-cached 60 s), never a generic image. A refund changes `?v=`.
+  Its watermark (~1,100 rotated glyphs, seconds of resvg CPU) is pre-rendered:
+  `public/og-assets/receipt-watermark.png`, made by `scripts/og-receipt-watermark.mts` — re-run
+  `node --experimental-strip-types scripts/og-receipt-watermark.mts` after changing `receiptWatermark`.
+- Shared logic: `src/lib/pay-share.ts` and `src/lib/receipt-share.ts` (tested), which like
+  `pay-core.ts` may only use relative `.ts` imports because Deno loads them. The seal is one SVG
+  (`src/lib/receipt-seal.ts`) drawn by both the page and the image. Rendering lives in
+  `netlify/lib/og-render.ts` (runs under Deno and Node); resvg skips text inside a nested SVG image,
+  so an SVG with words (the seal) goes through `raster()` first. `tsconfig.edge.json` type-checks
+  `netlify/` in `npm run build`.
+- **Import React by default in edge functions** (`import React from "react"`): react and
+  react-dom ship CommonJS, and Deno exposes a CommonJS module only as its default export — a
+  named import passes `tsc` but fails to bundle.
 - **`satori` is pinned below 0.33**: 0.33 added `harfbuzzjs`, which reads `hb.wasm` from disk and
   can't load in an edge bundle. Fonts live in `public/og-assets/`; the resvg wasm is copied there
   from `node_modules` by `npm run build` (`og-wasm`), so it always matches the JS.
