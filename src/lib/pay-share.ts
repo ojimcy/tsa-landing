@@ -121,6 +121,7 @@ export function ogImageUrl(origin: string, payPath: string, card: PayCard): stri
 /** When a payment link stops taking payments, if it hasn't already. */
 function openUntil(payment: PublicPayment | undefined, now: number): string | null {
   if (!payment || payment.status !== "pending" || payment.source === "open") return null;
+  if (!payment.expiresAt) return null;
   return Date.parse(payment.expiresAt) > now ? formatLagosDateTime(payment.expiresAt) : null;
 }
 

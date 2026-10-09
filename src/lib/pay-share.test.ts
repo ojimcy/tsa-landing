@@ -56,6 +56,11 @@ describe("pay link share preview", () => {
     expect(shareMeta(paymentCard(payment), url, payment, afterExpiry).description).not.toContain("Open until");
   });
 
+  it("a link that never expires says nothing about closing", () => {
+    const never = { ...payment, expiresAt: null };
+    expect(shareMeta(paymentCard(never), url, never, beforeExpiry).description).not.toContain("Open until");
+  });
+
   it("a long description is shortened without cutting an emoji in half", () => {
     const purpose = paymentCard({ ...payment, description: `${"a".repeat(88)}🎉🎉🎉` }).purpose!;
     expect(Array.from(purpose)).toHaveLength(90);
