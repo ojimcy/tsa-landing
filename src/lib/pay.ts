@@ -117,7 +117,7 @@ export class PayApiError extends Error {
  * response all collapse to one generic, friendly message instead of raw
  * fetch/JSON error text.
  */
-async function requestPayApi<T>(path: string, init: RequestInit, genericError: string): Promise<T> {
+export async function requestPayApi<T>(path: string, init: RequestInit, genericError: string): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${API_URL}${path}`, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });

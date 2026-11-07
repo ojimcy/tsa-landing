@@ -8,6 +8,7 @@ import TermsPage from './pages/terms';
 import DeleteAccountPage from './pages/delete-account';
 import PayPage from './pages/pay';
 import PayOpenLinkPage from './pages/pay-open-link';
+import ProductPage from './pages/product';
 import ReceiptPage from './pages/receipt';
 import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
@@ -31,6 +32,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/pay/l/:slug" element={<PayOpenLinkPage />} />
         {/* A TSA Pay receipt's public verify page — the QR on every live receipt opens it. */}
         <Route path="/r/:code" element={<ReceiptPage />} />
+        {/* A marketplace listing shared from the app; hands off to the app. */}
+        <Route path="/p/:id" element={<ProductPage />} />
         <Route path="/developers/tsa-pay" element={<DevelopersTsaPayPage />} />
       </Routes>
     </BrowserRouter>
