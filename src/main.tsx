@@ -9,6 +9,7 @@ import DeleteAccountPage from './pages/delete-account';
 import PayPage from './pages/pay';
 import PayOpenLinkPage from './pages/pay-open-link';
 import ProductPage from './pages/product';
+import GroupInvitePage from './pages/group';
 import ReceiptPage from './pages/receipt';
 import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
@@ -34,6 +35,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/r/:code" element={<ReceiptPage />} />
         {/* A marketplace listing shared from the app; hands off to the app. */}
         <Route path="/p/:id" element={<ProductPage />} />
+        {/* A private group's invite link shared from the app; hands off to the app. */}
+        <Route path="/g/:code" element={<GroupInvitePage />} />
         <Route path="/developers/tsa-pay" element={<DevelopersTsaPayPage />} />
       </Routes>
     </BrowserRouter>

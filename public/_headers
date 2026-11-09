@@ -5,3 +5,6 @@
 # Receipts are shared by their payers: never indexed.
 /r/*
   X-Robots-Tag: noindex, nofollow
+
+/g/*
+  X-Robots-Tag: noindex, nofollow
