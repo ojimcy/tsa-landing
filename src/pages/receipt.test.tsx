@@ -32,6 +32,15 @@ describe('ReceiptView', () => {
     expect(html).not.toContain('Refund');
   });
 
+  it('names both sides of a payment to a person in full, with the account it reached', () => {
+    const html = view({ ...receipt, merchantName: 'UZOCHUKWU OBINNA SUNDAY', payerName: 'Chinwendu Emmanuella Asuzu',
+      payerUsername: 'chinwendu', recipientAccountNumber: '8068157741', recipientBank: 'OPay' });
+    for (const want of ['UZOCHUKWU OBINNA SUNDAY', 'Chinwendu Emmanuella Asuzu (@chinwendu)', '8068157741, OPay']) {
+      expect(html).toContain(want);
+    }
+    expect(html).not.toContain('C.O.');
+  });
+
   it('carries the seal and the QR, and prints', () => {
     const html = view(receipt);
     expect(html).toContain('Verified by TSA Connect');

@@ -66,6 +66,7 @@ export function receiptImage(card: ReceiptCard, art: { logo: string; qrSvg: stri
   const { logo, qrSvg, seal, watermark } = art;
   const rows: [string, string | undefined, boolean?][] = [
     ["Paid to", card.merchant],
+    ["Account", card.account],
     [card.purpose?.label ?? "For", card.purpose?.text],
     ["Paid by", card.payer],
     ["Paid on", card.paidAt],

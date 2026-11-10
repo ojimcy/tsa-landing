@@ -9,6 +9,8 @@ import {
   formatLagosDateTime,
   formatPayCode,
   normalizePayCode,
+  receiptAccount,
+  receiptPayer,
   receiptRefundLine,
   type PublicReceipt,
 } from "./pay-core.ts";
@@ -29,6 +31,8 @@ export type ReceiptCard = {
   /** "For" or "Customer's note", with its words; absent when there are none. */
   purpose?: { label: string; text: string };
   payer?: string;
+  /** The account a payment to a person reached. */
+  account?: string;
   paidAt?: string;
   refund?: "partial" | "full";
   refundLine?: string;
@@ -60,7 +64,8 @@ export function receiptCard(r: PublicReceipt, verifyUrl: string): ReceiptCard {
     merchant: clip(r.merchantName, 40) ?? "",
     amount: formatKobo(r.amount),
     purpose: text ? { label: r.descriptionIsCustomerNote ? "Customer's note" : "For", text } : undefined,
-    payer: r.payerInitials || undefined,
+    payer: clip(receiptPayer(r), 48) || undefined,
+    account: receiptAccount(r) || undefined,
     paidAt: formatLagosDateTime(r.paidAt) ?? undefined,
     refund: r.refundStatus === "none" ? undefined : r.refundStatus,
     refundLine: receiptRefundLine(r) ?? undefined,

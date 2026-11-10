@@ -9,6 +9,8 @@ import {
   formatLagosDateTime,
   formatKobo,
   normalizePayCode,
+  receiptAccount,
+  receiptPayer,
   receiptRefundLine,
   receiptVerifyUrl,
   type PublicReceipt,
@@ -78,8 +80,9 @@ export default function ReceiptPage() {
 export function ReceiptView({ receipt, verifyUrl }: { receipt: PublicReceipt; verifyUrl: string }) {
   const rows: [string, string | null | undefined][] = [
     ["Paid to", receipt.merchantName],
+    ["Account", receiptAccount(receipt)],
     [receipt.descriptionIsCustomerNote ? "Customer's note:" : "For", receipt.description],
-    ["Paid by", receipt.payerInitials],
+    ["Paid by", receiptPayer(receipt)],
     ["Paid on", formatLagosDateTime(receipt.paidAt)],
     ["Payment code", receipt.code],
     ["Refund", receiptRefundLine(receipt)],

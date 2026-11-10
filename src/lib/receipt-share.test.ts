@@ -65,6 +65,17 @@ describe("receiptCard", () => {
     expect(card.refundLine).toBe("Partly refunded · 1.00 USD");
   });
 
+  it("names both sides of a payment to a person in full", () => {
+    const card = receiptCard(
+      { ...receipt, merchantName: "UZOCHUKWU OBINNA SUNDAY", payerName: "Chinwendu Emmanuella Asuzu", payerUsername: "chinwendu",
+        recipientAccountNumber: "8068157741", recipientBank: "OPay" },
+      receiptPageUrl(BARE),
+    );
+    expect(card.merchant).toBe("UZOCHUKWU OBINNA SUNDAY");
+    expect(card.payer).toBe("Chinwendu Emmanuella Asuzu (@chinwendu)");
+    expect(card.account).toBe("8068157741, OPay");
+  });
+
   it("leaves out rows it has nothing for", () => {
     const card = receiptCard({ ...receipt, description: "  ", payerInitials: "" }, receiptPageUrl(BARE));
     expect(card.purpose).toBeUndefined();
