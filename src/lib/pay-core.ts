@@ -115,7 +115,7 @@ export type PublicReceipt = {
   /** "TSA-XXXXX-XXXXX". */
   code: string;
   merchantName: string;
-  /** What the payer paid, in kobo. */
+  /** What the payment was for, in kobo — the platform fee is never on a receipt. */
   amount: number;
   currency: string;
   description: string;
@@ -124,6 +124,11 @@ export type PublicReceipt = {
   paidAt: string;
   /** The payer by initials only ("C.O."); empty when there is no one to name. */
   payerInitials: string;
+  /** A payment to a person names both sides in full; absent on a business payment. */
+  payerName?: string;
+  payerUsername?: string;
+  recipientAccountNumber?: string;
+  recipientBank?: string;
   refundStatus: "none" | "partial" | "full";
   /** Refunded so far, in USD ("12.50"). */
   refundedAmount: string;
@@ -168,4 +173,16 @@ export function receiptRefundLine(r: Pick<PublicReceipt, "refundStatus" | "refun
   if (r.refundStatus === "full") return `Refunded in full · ${r.refundedAmount} USD`;
   if (r.refundStatus === "partial") return `Partly refunded · ${r.refundedAmount} USD`;
   return null;
+}
+
+/** Who paid, as a receipt says it: full name and @username for a payment to a person, else initials. */
+export function receiptPayer(r: Pick<PublicReceipt, "payerName" | "payerUsername" | "payerInitials">): string {
+  if (r.payerName) return r.payerUsername ? `${r.payerName} (@${r.payerUsername})` : r.payerName;
+  return r.payerInitials;
+}
+
+/** The account a payment to a person reached, "8068157741, OPay"; empty for a business payment. */
+export function receiptAccount(r: Pick<PublicReceipt, "recipientAccountNumber" | "recipientBank">): string {
+  if (!r.recipientAccountNumber) return "";
+  return r.recipientBank ? `${r.recipientAccountNumber}, ${r.recipientBank}` : r.recipientAccountNumber;
 }
