@@ -19,6 +19,6 @@ describe('group invite page', () => {
   it('offers the app', () => {
     const html = renderToStaticMarkup(<GroupInviteView code={CODE} />);
     expect(html).toContain('Open in TSA Connect');
-    expect(html).toContain('private group');
+    expect(html).toContain('TSA Connect chat');
   });
 });
