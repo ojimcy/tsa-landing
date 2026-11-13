@@ -7,8 +7,8 @@ import type { LegalDocument } from './types';
 
 export const PRIVACY_POLICY: LegalDocument = {
   title: 'Privacy Policy',
-  version: '1.0',
-  effectiveDate: '24 July 2026',
+  version: '1.1',
+  effectiveDate: '13 November 2026',
   url: LEGAL_URLS.privacy,
   intro: [
     `This Privacy Policy explains how ${COMPANY.legalName} (${COMPANY.registrationNumber}) ("we", "us", "our") collects, uses, shares and protects your personal information when you use the ${COMPANY.productName} mobile application and related services (the "App").`,
@@ -28,7 +28,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       bullets: [
         'Account details: name, username, email address, phone number, password (stored only as a salted hash), and country.',
         'Profile details: profile photo, address, city and state where you provide them.',
-        'Identity verification (KYC): your Bank Verification Number (BVN) or National Identification Number (NIN), identity documents, and a selfie or short video. KYC is required for the products and services marketplace and for our payment services (P2P, Payment Merchant, Instant Transfer and Instant Pay). It is not required for on-chain spot trading or token swaps.',
+        'Identity verification (KYC): your Bank Verification Number (BVN) or National Identification Number (NIN), identity documents, and a selfie or short video (see section 3, Face data). KYC is required for the products and services marketplace and for our payment services (P2P, Payment Merchant, Instant Transfer and Instant Pay). It is not required for on-chain spot trading or token swaps.',
         'Financial details: bank account number, bank name and account name used for fiat settlement and payouts.',
         'Merchant details: business name, description, registered address, registration number and settlement account, where you apply to become a merchant.',
         'Content you submit: product and service listings, images, order and dispute messages, proof-of-payment uploads, ratings and reviews.',
@@ -36,7 +36,21 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '3. Information we collect automatically',
+      heading: '3. Face data',
+      body: [
+        'We collect face data only to verify your identity (KYC) and, if you later ask to change the name on your account, to confirm that you are the same person who first verified. We do not use face data for advertising, marketing, profiling or any other purpose.',
+      ],
+      bullets: [
+        'What is collected: during verification the App opens the secure page of our identity verification provider, Didit (Didit Identity Spain, S.L.). With your permission, it uses your camera to capture a photo of your identity document, a selfie and a short liveness video. From these, Didit creates a face template (a numerical representation of your face, not an image).',
+        'How it is used: Didit compares your selfie with the photo on your document, and checks that a real, live person is present. It can also check whether the same face has already been used to verify another TSA Connect account and, for a name change, whether the face matches your original verification.',
+        'What reaches us: your images, video and face template go directly from your device to Didit and are never sent to or stored on our servers. We receive only the result: whether verification passed, the details read from your document and, for a name change, whether your face matched together with a similarity score. A small number of authorised compliance staff can view your verification images in Didit’s secure console when a verification needs manual review; they are not downloaded to our systems.',
+        'Sharing and storage: we do not sell face data or share it with anyone other than Didit, which processes it on our behalf under a data processing agreement. Didit stores it encrypted in the European Union (Ireland) and does not use it to train its models. We disclose verification records to a regulator, court or law-enforcement agency only where the law requires it.',
+        'Retention and deletion: Didit keeps your verification images, video and face template for 5 years from the date of verification, because anti-money-laundering law requires us to keep KYC records for that long. It then deletes them automatically, and the face template is deleted together with the images. To ask about your face data or request its deletion, email ' + COMPANY.privacyEmail + '; we will act on your request to the extent the law allows.',
+        'Face ID and device biometrics: if you turn on Face ID (iPhone) or fingerprint or face unlock (Android) to unlock the App or approve wallet transactions, the matching is done entirely by your device’s operating system. The App receives only a pass or fail result and never accesses, collects or stores your face or fingerprint data.',
+      ],
+    },
+    {
+      heading: '4. Information we collect automatically',
       bullets: [
         'Public wallet addresses you register with the App, and the transaction history associated with them.',
         'Device and technical data: device model, operating system version, app version, language, and a push notification token if you enable notifications.',
@@ -47,7 +61,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '4. How we use your information',
+      heading: '5. How we use your information',
       bullets: [
         'To create and operate your account and provide the features you use.',
         'To verify your identity and meet our anti-money-laundering, counter-terrorist-financing and know-your-customer obligations.',
@@ -60,7 +74,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '5. Legal bases for processing',
+      heading: '6. Legal bases for processing',
       body: [
         'Where the Nigeria Data Protection Act and the NDPR apply, and where the EU/UK GDPR applies to you, we rely on the following legal bases:',
       ],
@@ -68,16 +82,17 @@ export const PRIVACY_POLICY: LegalDocument = {
         'Performance of a contract — to provide the App and the services you ask for.',
         'Legal obligation — for KYC, anti-money-laundering, tax and record-keeping duties.',
         'Legitimate interests — to secure the platform, prevent fraud, and improve our services, balanced against your rights.',
+        'Explicit consent — for the face data described in section 3, which you give when you start identity verification. Without it you cannot complete verification, and features that require KYC will not be available.',
         'Consent — for push notifications and for optional features such as camera and photo access. You can withdraw consent at any time in your device settings.',
       ],
     },
     {
-      heading: '6. Who we share information with',
+      heading: '7. Who we share information with',
       body: [
         'We do not sell your personal information. We share it only as described below, and only to the extent needed:',
       ],
       bullets: [
-        'Identity verification providers, to confirm your BVN or NIN and check your documents.',
+        'Identity verification providers, to confirm your BVN or NIN, check your documents and verify your face as described in section 3.',
         'Licensed payment and settlement partners, to process fiat collections and payouts to your bank account.',
         'Blockchain infrastructure and liquidity providers, to read balances, broadcast transactions and obtain swap quotes. These receive wallet addresses and transaction data, not your identity documents.',
         'Cloud hosting, media storage, email delivery and push notification providers that operate our infrastructure under contract.',
@@ -87,23 +102,24 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '7. International transfers',
+      heading: '8. International transfers',
       body: [
         'Some of our service providers operate outside Nigeria. Where we transfer your personal information abroad, we do so under the safeguards required by the Nigeria Data Protection Act — typically standard contractual clauses or a transfer to a country recognised as providing adequate protection.',
       ],
     },
     {
-      heading: '8. How long we keep your information',
+      heading: '9. How long we keep your information',
       bullets: [
         'Account and profile data: for as long as your account is open.',
         'After you delete your account: your account is closed immediately and we retain a limited record for 30 days so that we can reverse the deletion if you ask us to, after which we erase or anonymise it.',
-        'KYC records and transaction history: retained for at least 5 years after the end of our relationship with you, because anti-money-laundering law requires it. This obligation outlives your account and survives a deletion request.',
+        'Face images, video and face templates: 5 years from verification, then deleted — see section 3.',
+        'KYC records (your verification result and the details read from your documents) and transaction history: retained for at least 5 years after the end of our relationship with you, because anti-money-laundering law requires it. This obligation outlives your account and survives a deletion request.',
         'Support correspondence: up to 2 years.',
         'On-chain data: permanent and outside our control.',
       ],
     },
     {
-      heading: '9. Your rights',
+      heading: '10. Your rights',
       body: [
         'Subject to the retention duties described above, you have the right to:',
       ],
@@ -117,7 +133,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '10. Deleting your account',
+      heading: '11. Deleting your account',
       body: [
         'You can delete your account at any time from Settings → Delete Account. You will be asked to confirm your password. You cannot delete while you have an open P2P trade or an in-flight marketplace order, because another user’s money may be held in escrow against you — settle or cancel those first.',
         'When you confirm, your account is closed immediately, you are signed out, and your devices stop receiving notifications. Our team is notified so the permanent erasure can be completed after the 30-day window. If you change your mind inside that window, contact ' + COMPANY.supportEmail + ' and we can reinstate the account.',
@@ -125,26 +141,26 @@ export const PRIVACY_POLICY: LegalDocument = {
       ],
     },
     {
-      heading: '11. Security',
+      heading: '12. Security',
       body: [
         'We protect your information with encryption in transit, hashed passwords, access controls on our systems, and optional PIN and biometric locks on the App itself. Your wallet recovery phrase is held in your device’s secure enclave or keystore.',
         'No system is perfectly secure. You are responsible for keeping your password, PIN and recovery phrase confidential, and for the security of the device you use.',
       ],
     },
     {
-      heading: '12. Children',
+      heading: '13. Children',
       body: [
         'The App is not intended for anyone under 18, and we do not knowingly collect information from children. If you believe a child has provided us with personal information, contact us and we will delete it.',
       ],
     },
     {
-      heading: '13. Changes to this policy',
+      heading: '14. Changes to this policy',
       body: [
         'We may update this policy. When we make a material change we will update the version and effective date above and notify you in the App or by email before the change takes effect. Continuing to use the App after that means you accept the updated policy.',
       ],
     },
     {
-      heading: '14. Contact us',
+      heading: '15. Contact us',
       body: [
         `${COMPANY.legalName} (${COMPANY.registrationNumber}), ${COMPANY.jurisdiction}.`,
         `Privacy and data protection enquiries: ${COMPANY.privacyEmail}`,
