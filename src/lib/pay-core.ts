@@ -12,6 +12,9 @@ export type PublicPayment = {
   /** The payment's code, "TSA-XXXXX-XXXXX": copied or read out, typed in the app (Home → Pay), and the receipt's number. */
   payCode?: string;
   merchantName: string;
+  /** A verified merchant; the registration number once its registered business passed KYB. */
+  merchantBlueTick?: boolean;
+  merchantRegistrationNumber?: string;
   status: PaymentStatus;
   amount: number;
   customerTotal: number;

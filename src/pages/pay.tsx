@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { BadgeCheck, CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PayCodeLine, PrintButton } from "@/components/pay/pay-code";
 import { ReceiptProof } from "@/components/pay/receipt-proof";
@@ -166,9 +166,15 @@ function PaymentSummary({
 
   return (
     <>
-      <p className="text-sm font-medium uppercase tracking-wider text-slate-400 wrap-anywhere">
+      <p className="flex items-center gap-1 text-sm font-medium uppercase tracking-wider text-slate-400 wrap-anywhere">
         {payment.merchantName}
+        {payment.merchantBlueTick && (
+          <BadgeCheck className="h-4 w-4 shrink-0 text-blue-500" aria-label="Verified merchant" />
+        )}
       </p>
+      {payment.merchantRegistrationNumber && (
+        <p className="mt-0.5 text-xs text-slate-400">Reg. {payment.merchantRegistrationNumber}</p>
+      )}
       <p className="mt-2 text-3xl font-bold text-slate-900">
         {formatKobo(payment.customerTotal)}
       </p>

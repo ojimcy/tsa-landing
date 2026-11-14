@@ -57,6 +57,13 @@ describe('PaymentStatusView', () => {
     expect(html).toContain('Link open until 3 Oct 2026');
   });
 
+  it('marks a verified merchant, with its registration number when it has one', () => {
+    const html = render({ ...link, merchantBlueTick: true, merchantRegistrationNumber: 'RC 1234567' });
+    expect(html).toContain('Verified merchant');
+    expect(html).toContain('Reg. RC 1234567');
+    expect(render(link)).not.toContain('Verified merchant');
+  });
+
   it('leaves out the optional lines when the API does not send them', () => {
     const html = render({ ...link, description: undefined, customerName: undefined });
     expect(html).not.toContain('Requested for');
