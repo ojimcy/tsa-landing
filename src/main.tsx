@@ -11,6 +11,7 @@ import PayOpenLinkPage from './pages/pay-open-link';
 import ProductPage from './pages/product';
 import GroupInvitePage from './pages/group';
 import ReceiptPage from './pages/receipt';
+import BillReceiptPage from './pages/bill-receipt';
 import DevelopersTsaPayPage from './pages/developers-tsa-pay';
 import './index.css';
 
@@ -33,6 +34,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/pay/l/:slug" element={<PayOpenLinkPage />} />
         {/* A TSA Pay receipt's public verify page — the QR on every live receipt opens it. */}
         <Route path="/r/:code" element={<ReceiptPage />} />
+        <Route path="/b/:code" element={<BillReceiptPage />} />
         {/* A marketplace listing shared from the app; hands off to the app. */}
         <Route path="/p/:id" element={<ProductPage />} />
         {/* A private group's invite link shared from the app; hands off to the app. */}
