@@ -32,6 +32,8 @@ export type ShareMeta = {
   imageHeight?: number;
   /** A third-party image (a listing photo) whose size and format we don't know. */
   imageUnsized?: boolean;
+  /** og:image:type; a pay card's "image/png" when left out. */
+  imageType?: string;
   /** og:site_name; "TSA Pay" when left out. */
   siteName?: string;
 };
@@ -180,7 +182,7 @@ export function metaTags(meta: ShareMeta): string {
     ...(meta.imageUnsized
       ? []
       : [
-          `<meta property="og:image:type" content="image/png" />`,
+          `<meta property="og:image:type" content="${e(meta.imageType ?? "image/png")}" />`,
           `<meta property="og:image:width" content="${meta.imageWidth ?? 1200}" />`,
           `<meta property="og:image:height" content="${meta.imageHeight ?? 630}" />`,
         ]),

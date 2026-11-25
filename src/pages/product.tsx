@@ -8,7 +8,7 @@ import {
   isProductId,
   PRODUCT_GONE,
   PRODUCT_LOAD_ERROR,
-  productAppUrl,
+  productOpenUrl,
   type PublicProduct,
 } from "@/lib/product";
 import { PayApiError } from "@/lib/pay";
@@ -66,7 +66,7 @@ export function ProductView({ product }: { product: PublicProduct }) {
   const digital = product.kind === "digital";
   const by = digital ? product.digital?.creatorName : product.companyName;
   const openApp = () => {
-    window.location.href = productAppUrl(product.id);
+    window.location.href = productOpenUrl(product.id, navigator.userAgent);
   };
 
   return (

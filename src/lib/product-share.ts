@@ -24,15 +24,37 @@ export function parseProductPath(pathname: string): string | null {
 
 const usd = (n: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(n);
 
-export function productShareMeta(product: ProductPreview, origin: string): ShareMeta {
-  const by = product.companyName ? ` · ${product.companyName}` : "";
-  const blurb = clip(product.description?.trim(), 140);
+// WhatsApp draws no thumbnail for an unsized, full-resolution photo. A
+// Cloudinary listing photo is served as the same 1200x630 JPEG a pay card is.
+const CARD_WIDTH = 1200;
+const CARD_HEIGHT = 630;
+const CLOUDINARY_UPLOAD = /^https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\//;
+
+export function cardImage(url: string): Pick<ShareMeta, "image" | "imageWidth" | "imageHeight" | "imageType" | "imageUnsized"> {
+  const m = CLOUDINARY_UPLOAD.exec(url);
+  if (!m) return { image: url, imageUnsized: true };
+  const transform = `c_fill,g_auto,w_${CARD_WIDTH},h_${CARD_HEIGHT},q_auto,f_jpg/`;
   return {
-    title: `${product.name} — ${usd(product.price)}`,
+    image: m[0] + transform + url.slice(m[0].length),
+    imageWidth: CARD_WIDTH,
+    imageHeight: CARD_HEIGHT,
+    imageType: "image/jpeg",
+  };
+}
+
+const oneLine = (s: string | undefined) => s?.replace(/\s+/g, " ").trim() || undefined;
+
+export function productShareMeta(product: ProductPreview, origin: string): ShareMeta {
+  const name = oneLine(product.name) ?? "Product";
+  const seller = oneLine(product.companyName);
+  const by = seller && seller !== name ? ` · ${seller}` : "";
+  const blurb = clip(oneLine(product.description), 140);
+  const photo = product.images?.find((i) => i.url)?.url;
+  return {
+    title: `${name} — ${usd(product.price)}`,
     description: blurb ? `${blurb}${by}` : `On TSA Connect${by}`,
     url: `${origin}/p/${product.id}`,
-    image: product.images?.find((i) => i.url)?.url ?? `${origin}/icon-512.png`,
-    imageUnsized: true,
+    ...(photo ? cardImage(photo) : { image: `${origin}/icon-512.png`, imageUnsized: true }),
     siteName: "TSA Connect",
   };
 }
