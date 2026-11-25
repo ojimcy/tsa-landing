@@ -30,6 +30,10 @@ export type ShareMeta = {
   /** The image's size; a pay card's 1200×630 when left out. */
   imageWidth?: number;
   imageHeight?: number;
+  /** A third-party image (a listing photo) whose size and format we don't know. */
+  imageUnsized?: boolean;
+  /** og:site_name; "TSA Pay" when left out. */
+  siteName?: string;
 };
 
 type PayPage = { kind: "payment"; id: string } | { kind: "open"; slug: string };
@@ -168,14 +172,18 @@ export function metaTags(meta: ShareMeta): string {
     `<meta name="description" content="${e(meta.description)}" />`,
     `<meta name="robots" content="noindex, nofollow" />`,
     `<meta property="og:type" content="website" />`,
-    `<meta property="og:site_name" content="TSA Pay" />`,
+    `<meta property="og:site_name" content="${e(meta.siteName ?? "TSA Pay")}" />`,
     `<meta property="og:url" content="${e(meta.url)}" />`,
     `<meta property="og:title" content="${e(meta.title)}" />`,
     `<meta property="og:description" content="${e(meta.description)}" />`,
     `<meta property="og:image" content="${e(meta.image)}" />`,
-    `<meta property="og:image:type" content="image/png" />`,
-    `<meta property="og:image:width" content="${meta.imageWidth ?? 1200}" />`,
-    `<meta property="og:image:height" content="${meta.imageHeight ?? 630}" />`,
+    ...(meta.imageUnsized
+      ? []
+      : [
+          `<meta property="og:image:type" content="image/png" />`,
+          `<meta property="og:image:width" content="${meta.imageWidth ?? 1200}" />`,
+          `<meta property="og:image:height" content="${meta.imageHeight ?? 630}" />`,
+        ]),
     `<meta property="og:image:alt" content="${e(meta.title)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${e(meta.title)}" />`,
