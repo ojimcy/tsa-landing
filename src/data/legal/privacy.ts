@@ -7,8 +7,8 @@ import type { LegalDocument } from './types';
 
 export const PRIVACY_POLICY: LegalDocument = {
   title: 'Privacy Policy',
-  version: '1.1',
-  effectiveDate: '13 November 2026',
+  version: '1.2',
+  effectiveDate: '26 November 2026',
   url: LEGAL_URLS.privacy,
   intro: [
     `This Privacy Policy explains how ${COMPANY.legalName} (${COMPANY.registrationNumber}) ("we", "us", "our") collects, uses, shares and protects your personal information when you use the ${COMPANY.productName} mobile application and related services (the "App").`,
@@ -54,6 +54,7 @@ export const PRIVACY_POLICY: LegalDocument = {
       bullets: [
         'Public wallet addresses you register with the App, and the transaction history associated with them.',
         'Device and technical data: device model, operating system version, app version, language, and a push notification token if you enable notifications.',
+        'Contacts: only when you tap the contacts button to buy airtime or data, the App opens your phone\u2019s contact picker and reads the phone number of the one contact you choose. We do not upload or store your address book; the chosen number is used only as the bill recipient.',
         'Usage and security data: IP address, login timestamps, failed login attempts and similar records we keep to detect fraud and abuse.',
       ],
       footnote: [
