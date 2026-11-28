@@ -223,7 +223,7 @@ describe('payment codes and receipts', () => {
   it('a payment from before codes shows no code line', () => {
     onDevice(DESKTOP_UA, false);
     const html = render(link);
-    expect(html).not.toContain('Payment code');
+    expect(html).not.toContain('Reference code');
     expect(html).not.toContain('tap Pay on the home screen');
   });
 

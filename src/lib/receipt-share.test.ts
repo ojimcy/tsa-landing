@@ -7,7 +7,7 @@ import { receiptSealSvg } from "@/lib/receipt-seal";
 
 const BARE = "8D4DQY4DMN";
 const receipt: PublicReceipt = {
-  code: "TSA-8D4DQ-Y4DMN",
+  code: "TPR-8D4DQ-Y4DMN",
   merchantName: "Sky Air Ltd",
   amount: 101_011,
   currency: "NGN",
@@ -42,7 +42,7 @@ describe("parseReceiptPath", () => {
 describe("receiptCard", () => {
   it("is the receipt page's rows: payer by initials, Lagos time, the canonical check link", () => {
     expect(receiptCard(receipt, receiptPageUrl(BARE))).toEqual({
-      code: "TSA-8D4DQ-Y4DMN",
+      code: "TPR-8D4DQ-Y4DMN",
       merchant: "Sky Air Ltd",
       amount: "₦1,010.11",
       purpose: { label: "For", text: "Flight LOS–ABV, 3 Oct" },
@@ -50,7 +50,7 @@ describe("receiptCard", () => {
       paidAt: "25 Sept 2026, 16:09 WAT",
       refund: undefined,
       refundLine: undefined,
-      verifyUrl: "https://tsaconnectworld.com/r/TSA-8D4DQ-Y4DMN",
+      verifyUrl: "https://tsaconnectworld.com/r/TPR-8D4DQ-Y4DMN",
     });
   });
 
@@ -88,7 +88,7 @@ describe("receipt image and meta", () => {
 
   it("versions the image URL by what it shows, so a refund gets a new one", () => {
     const before = receiptImageUrl("https://tsaconnectworld.com", BARE, card);
-    expect(before).toMatch(/^https:\/\/tsaconnectworld\.com\/og\/r\/TSA-8D4DQ-Y4DMN\.png\?v=[0-9a-z]+$/);
+    expect(before).toMatch(/^https:\/\/tsaconnectworld\.com\/og\/r\/TPR-8D4DQ-Y4DMN\.png\?v=[0-9a-z]+$/);
     const refunded = receiptCard({ ...receipt, refundStatus: "partial", refundedAmount: "1.00" }, receiptPageUrl(BARE));
     expect(receiptImageUrl("https://tsaconnectworld.com", BARE, refunded)).not.toBe(before);
   });
@@ -96,9 +96,9 @@ describe("receipt image and meta", () => {
   it("previews as the receipt: its words, its portrait image, never indexed", () => {
     const meta = receiptShareMeta(card, "https://deploy-preview-3--tsa.netlify.app", BARE);
     expect(meta.title).toBe("Receipt: ₦1,010.11 to Sky Air Ltd");
-    expect(meta.description).toBe("Paid 25 Sept 2026, 16:09 WAT · TSA-8D4DQ-Y4DMN · Verified by TSA Connect");
+    expect(meta.description).toBe("Paid 25 Sept 2026, 16:09 WAT · TPR-8D4DQ-Y4DMN · Verified by TSA Connect");
     // The page link is always the real site; the image comes from the deploy that drew it.
-    expect(meta.url).toBe("https://tsaconnectworld.com/r/TSA-8D4DQ-Y4DMN");
+    expect(meta.url).toBe("https://tsaconnectworld.com/r/TPR-8D4DQ-Y4DMN");
     expect(meta.image).toMatch(/^https:\/\/deploy-preview-3--tsa\.netlify\.app\/og\/r\//);
     const tags = metaTags(meta);
     expect(tags).toContain('<meta property="og:image:width" content="1080" />');

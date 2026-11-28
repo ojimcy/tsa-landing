@@ -233,7 +233,7 @@ function PaymentReceipt({ payment }: { payment: PublicPayment }) {
     ["Note from customer", customerNote],
     ["Requested for", payment.customerName],
     ["Paid on", paidAt],
-    ["Payment code", payment.payCode],
+    ["Reference code", payment.payCode],
   ];
 
   return (

@@ -18,7 +18,7 @@ const receipt: PublicReceipt = {
   refundStatus: 'none',
   refundedAmount: '0.00',
 };
-const VERIFY = 'https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD';
+const VERIFY = 'https://tsaconnectworld.com/r/TPR-7K2QF-M9XWD';
 const view = (r: PublicReceipt) => renderToStaticMarkup(<ReceiptView receipt={r} verifyUrl={VERIFY} />);
 
 describe('ReceiptView', () => {
@@ -66,7 +66,7 @@ describe('ReceiptView', () => {
 
 describe('receiptVerifyUrl', () => {
   it("is the site's own domain and the formatted code, whatever origin served the page", () => {
-    expect(receiptVerifyUrl('7K2QFM9XWD')).toBe('https://tsaconnectworld.com/r/TSA-7K2QF-M9XWD');
+    expect(receiptVerifyUrl('7K2QFM9XWD')).toBe('https://tsaconnectworld.com/r/TPR-7K2QF-M9XWD');
   });
 });
 

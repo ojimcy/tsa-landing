@@ -9,7 +9,7 @@ export type PaymentSource = "api" | "link" | "open";
 
 export type PublicPayment = {
   id: string;
-  /** The payment's code, "TSA-XXXXX-XXXXX": copied or read out, typed in the app (Home → Pay), and the receipt's number. */
+  /** The payment's reference code, "TPR-XXXXX-XXXXX" (older ones "TSA-…"): copied or read out, typed in the app (Home → Pay), and the receipt's number. */
   payCode?: string;
   merchantName: string;
   /** A verified merchant; the registration number once its registered business passed KYB. */
@@ -115,7 +115,7 @@ export function formatLagosDateTime(iso: string | null | undefined): string | nu
 
 /** A succeeded live payment's public receipt (GET /pay/public/receipt/:code) — what /r/:code shows. */
 export type PublicReceipt = {
-  /** "TSA-XXXXX-XXXXX". */
+  /** "TPR-XXXXX-XXXXX" (older receipts "TSA-…"). */
   code: string;
   merchantName: string;
   /** What the payment was for, in kobo — the platform fee is never on a receipt. */
@@ -150,8 +150,8 @@ const PAY_CODE_IGNORED =
  * can't be one. Mirrors the API's NormalizePayCode
  * (tsa-api-go/internal/services/pay_code.go) — change both together:
  * whitespace and dashes of any kind dropped, any other non-ASCII character
- * refused, upper-cased, a leading TSA dropped only when exactly a code's worth
- * follows it, O read as 0 and I/L as 1.
+ * refused, upper-cased, a leading TPR (or the older TSA) dropped only when
+ * exactly a code's worth follows it, O read as 0 and I/L as 1.
  */
 export function normalizePayCode(input: string): string | null {
   if (input.length > 64) return null;
@@ -159,15 +159,20 @@ export function normalizePayCode(input: string): string | null {
   // Checked before upper-casing, which folds ı to I and ſ to S: a code is ASCII.
   if (/[\u0080-\u{10ffff}]/u.test(code)) return null;
   code = code.toUpperCase();
-  if (code.length === 13 && code.startsWith("TSA")) code = code.slice(3);
+  if (code.length === 13 && (code.startsWith("TPR") || code.startsWith("TSA"))) code = code.slice(3);
   if (code.length !== 10) return null;
   code = code.replace(/O/g, "0").replace(/[IL]/g, "1");
   for (const ch of code) if (!PAY_CODE_ALPHABET.includes(ch)) return null;
   return code;
 }
 
-/** A stored ten-character code as the payer sees it: TSA-XXXXX-XXXXX. */
+/** A stored ten-character TSA Pay reference code as the payer sees it: TPR-XXXXX-XXXXX. */
 export function formatPayCode(bare: string): string {
+  return `TPR-${bare.slice(0, 5)}-${bare.slice(5)}`;
+}
+
+/** A stored ten-character bill receipt code: TSA-XXXXX-XXXXX (bills are not TSA Pay). */
+export function formatBillCode(bare: string): string {
   return `TSA-${bare.slice(0, 5)}-${bare.slice(5)}`;
 }
 

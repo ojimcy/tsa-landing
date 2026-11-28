@@ -19,10 +19,10 @@ export function PayCodeLine({ code, payable }: { code: string; payable: boolean 
 
   return (
     <div className="mt-4 rounded-xl border border-slate-200 px-4 py-3">
-      <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Payment code</p>
+      <p className="text-xs font-medium uppercase tracking-wider text-slate-400">Reference code</p>
       <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
         <span className="font-mono text-lg font-semibold tracking-wider text-slate-900">{code}</span>
-        <Button variant="ghost" size="sm" className="print:hidden" aria-label="Copy payment code" onClick={() => copy(code)}>
+        <Button variant="ghost" size="sm" className="print:hidden" aria-label="Copy reference code" onClick={() => copy(code)}>
           {status === "copied" ? "Copied" : "Copy"}
         </Button>
       </div>

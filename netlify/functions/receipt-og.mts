@@ -1,4 +1,4 @@
-// The 1080×1350 share image of a live receipt: /og/r/TSA-XXXXX-XXXXX.png. It is
+// The 1080×1350 share image of a live receipt: /og/r/TPR-XXXXX-XXXXX.png. It is
 // drawn from the API's public receipt, never from the URL, so nobody can make a
 // TSA-branded receipt for a payment that wasn't made — and a code with no live
 // receipt behind it gets no image at all, not a generic one.

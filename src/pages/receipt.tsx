@@ -84,7 +84,7 @@ export function ReceiptView({ receipt, verifyUrl }: { receipt: PublicReceipt; ve
     [receipt.descriptionIsCustomerNote ? "Customer's note:" : "For", receipt.description],
     ["Paid by", receiptPayer(receipt)],
     ["Paid on", formatLagosDateTime(receipt.paidAt)],
-    ["Payment code", receipt.code],
+    ["Reference code", receipt.code],
     ["Refund", receiptRefundLine(receipt)],
   ];
 

@@ -159,7 +159,7 @@ export function receiptImage(card: ReceiptCard, art: ReceiptArt): ReactElement {
     ["Paid by", card.payer],
     ["Paid on", card.paidAt],
     ["Refunded", card.refundLine?.replace(/^(Partly refunded|Refunded in full) · /, "")],
-    ["Payment code", card.code, true],
+    ["Reference code", card.code, true],
   ];
   return receiptLayoutImage(
     {

@@ -43,7 +43,7 @@ describe('Copy button feedback', () => {
 
   it('labels the button for screen readers', async () => {
     const el = await mount(<PayCodeLine code="TSA-7K2QF-M9XWD" payable />);
-    expect(el.querySelector('button')!.getAttribute('aria-label')).toBe('Copy payment code');
+    expect(el.querySelector('button')!.getAttribute('aria-label')).toBe('Copy reference code');
   });
 
   it("says when it couldn't copy", async () => {

@@ -61,7 +61,7 @@ export function ownOpenLinkUrl(s: string | undefined): string | null {
  * our own host: the QR and seal on a receipt vouch for the page it opens.
  */
 export function ownReceiptUrl(s: string | undefined): string | null {
-  return ownUrl(s, (path) => /^\/r\/TSA-[0-9A-Z]{5}-[0-9A-Z]{5}$/.test(path));
+  return ownUrl(s, (path) => /^\/r\/(?:TPR|TSA)-[0-9A-Z]{5}-[0-9A-Z]{5}$/.test(path));
 }
 
 /** The public page a receipt's QR opens, on the site's canonical domain (never the origin it was viewed from). */

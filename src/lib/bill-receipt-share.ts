@@ -3,7 +3,7 @@
 // 1080×1350 image. Like receipt-share.ts it is drawn only from the API — never
 // from the URL — so nobody can make a TSA-branded receipt for a bill that wasn't
 // paid. Only relative .ts imports, so the edge functions (Deno) can load it.
-import { formatLagosDateTime, formatPayCode, normalizePayCode } from "./pay-core.ts";
+import { formatLagosDateTime, formatBillCode, normalizePayCode } from "./pay-core.ts";
 import { cardVersion, clip, getPublic, type ShareMeta } from "./pay-share.ts";
 import { RECEIPT_IMAGE_HEIGHT, RECEIPT_IMAGE_WIDTH, SITE_ORIGIN } from "./receipt-share.ts";
 
@@ -108,12 +108,12 @@ export function parseBillReceiptPath(pathname: string): string | null {
 
 /** The canonical public page a bill receipt's QR opens. */
 export function billReceiptPageUrl(bare: string): string {
-  return `${SITE_ORIGIN}/b/${formatPayCode(bare)}`;
+  return `${SITE_ORIGIN}/b/${formatBillCode(bare)}`;
 }
 
 /** The receipt image, e.g. /og/b/TSA-8D4DQ-Y4DMN.png?v=…; the version moves if the receipt changes. */
 export function billReceiptImageUrl(origin: string, bare: string, card: BillReceiptCard): string {
-  return `${origin}/og/b/${formatPayCode(bare)}.png?v=${cardVersion(card)}`;
+  return `${origin}/og/b/${formatBillCode(bare)}.png?v=${cardVersion(card)}`;
 }
 
 export function billReceiptShareMeta(card: BillReceiptCard, origin: string, bare: string): ShareMeta {
